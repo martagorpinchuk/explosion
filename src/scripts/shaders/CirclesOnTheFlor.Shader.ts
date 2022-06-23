@@ -3,7 +3,8 @@ import { Color, ShaderMaterial, TextureLoader } from "three";
 //
 
 const textureLoader = new TextureLoader();
-const circleTexture = textureLoader.load( 'resources/textures/circle.png' );
+const circleTexture = textureLoader.load( 'resources/textures/circle3.png' );
+const noise = textureLoader.load( 'resources/textures/tNoise.png' );
 
 export class CircleMaterial extends ShaderMaterial {
 
@@ -31,19 +32,20 @@ export class CircleMaterial extends ShaderMaterial {
                 transformRow4
             );
 
-            gl_Position = projectionMatrix * modelViewMatrix * transforms * vec4( position * uTime * 0.0009, 1.0 );
+            gl_Position = projectionMatrix * modelViewMatrix * transforms * vec4( position * uTime * 0.002, 1.0 );
 
             vUv = uv;
 
         }`,
         this.transparent = true;
-        this.alphaTest = 10.0001;
+        // this.alphaTest = 10.0001;
         this.fragmentShader = `
         varying vec2 vUv;
 
         uniform float uTime;
         uniform sampler2D uTexture;
         uniform vec3 uColor;
+        uniform sampler2D uNoise;
 
         void main() {
 
@@ -54,15 +56,19 @@ export class CircleMaterial extends ShaderMaterial {
 
             float strength = step( 0.02, abs( distance( vUv, vec2( 0.5 ) ) - 0.1 - uTime * 0.0001 ) );
 
-            // if ( distanceToCenter > 0.47 ) { discard; }
-            // if ( distanceToCenter < 0.4 ) { discard; }
+            float noise = texture2D( uNoise, vUv ).r * 5.1;
+            // if ( distanceToCenter > 0.47 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
+            // if ( distanceToCenter < 0.4 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
+            if ( distanceToCenter > 0.47 ) { discard; }
+            if ( distanceToCenter < 0.4 ) { discard; }
 
             // gl_FragColor = vec4( vec3( strength ), 1.0 - uTime * 10.1 ); //* texture2D( uTexture, gl_PointCoord );
 
             gl_FragColor = texture2D( uTexture, vUv );
+            // gl_FragColor = texture2D( uTexture, vUv + sin(uTime * 0.0005) * 0.1 * noise );
             gl_FragColor.rgb += uColor;
 
-            gl_FragColor.a = 1.0;// - uTime * 0.0005;
+            gl_FragColor.a = 0.7 - uTime * 0.0007;
 
         }`,
 
@@ -70,6 +76,7 @@ export class CircleMaterial extends ShaderMaterial {
 
             uTime: { value: 0.0 },
             uTexture: { value: circleTexture },
+            uNoise: { value: noise },
             uColor: { value: new Color( 0x2b1605 ) }
 
         }

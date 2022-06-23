@@ -133,11 +133,12 @@ export class SphereMaterial extends ShaderMaterial {
 
             // float n = texture2D( uNoise, abs( normal.xy ) ).r * 0.15;
 
-            float distortion = pnoise( ( normal * 0.98 + uTime * 0.0005 ) * 2.3, vec3( 100.0 ) ) * 0.105;
+            float distortion = pnoise( ( normal * 0.98 + uTime * 0.0005 ) * 2.3, vec3( 100.0 ) ) * 0.005;
 
             vec3 newPosition = position + ( normal * distortion );
-            newPosition.y += 0.2;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition + uTime * 0.0005, 1.0 );
+            // newPosition.y -= 0.1;
+            // gl_Position = projectionMatrix * modelViewMatrix * vec4( vec3( newPosition.x + uTime * 0.004, newPosition.y + uTime * 0.004, newPosition.z + uTime * 0.004 ), 1.0 );
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition * uTime * 0.1, 1.0 );
 
             vUv = uv;
             vNormal = normal;
@@ -148,9 +149,9 @@ export class SphereMaterial extends ShaderMaterial {
         this.fragmentShader = `
         uniform float uTime;
         uniform sampler2D uNoise;
-        uniform vec3 uYellowColor;
-        uniform vec3 uRedColor;
-        uniform vec3 uOrangeColor;
+        uniform vec3 uInnerColor;
+        uniform vec3 uOuterColor;
+        uniform vec3 uMiddleColor;
 
         varying vec2 vUv;
         varying vec3 vNormal;
@@ -163,13 +164,13 @@ export class SphereMaterial extends ShaderMaterial {
         void main() {
 
             float r = 1.1 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
-            float noise = texture2D( uNoise, abs( vNormal.xy ) ).r * 0.6;
-            vec3 color = mix( uYellowColor, uRedColor, vNoise * 18.0 + r * 0.25 ); //+ noise * 1.0;
+            float noise = texture2D( uNoise, abs( vNormal.xy ) ).r * 1.1;
+            vec3 color = mix( uInnerColor, uOuterColor, noise * 1.6 + r * 1.4 ) * 1.2; //+ noise * 1.0;
             // vec3 color = vec3( noise + r );
-            color = mix( color, uOrangeColor, noise );
+            color = mix( color, uMiddleColor * 0.9, noise );
 
             gl_FragColor.rgb = color;
-            gl_FragColor.a = 1.0 - uTime * 0.0006;
+            gl_FragColor.a = 1.0 - uTime * 0.0015;
 
         }`,
 
@@ -177,9 +178,9 @@ export class SphereMaterial extends ShaderMaterial {
 
             uTime: { value: 0.0 },
             uNoise: { value: noise },
-            uYellowColor: { value: new Color( 0xffd500 ) },
-            uRedColor: { value: new Color( 0x871a01 ) },
-            uOrangeColor: { value: new Color( 0xfa7305 ) }
+            uInnerColor: { value: new Color( 0xffe55e ) },
+            uOuterColor: { value: new Color( 0xd8b625 ) },
+            uMiddleColor: { value: new Color( 0xfa7305 ) }
 
         }
 

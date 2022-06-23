@@ -133,13 +133,13 @@ export class ExplosionMaterial extends ShaderMaterial {
             uPointTexture: { value: explosionTexture },
             uNoise: { value: noise },
             alphaTest: { value: 0.0001 },
-            uColor: { value: new Color( 0x1A75FF ) },
+            uColor: { value: new Color( 0xeb9c15 ) },
             uTime: { value: 0.0 },
             uTimeX: { value: 0.0 },
             uTimeY: { value: 0.0 },
             uFrameDuration: { value: 16.0 },
             uOpacity: { value: 0.9 },
-            uInnerColor: { value: new Color( 0xFFCE00 ) },
+            uInnerColor: { value: new Color( 0xb57507 ) },
         };
 
     }

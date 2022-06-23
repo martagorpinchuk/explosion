@@ -11,7 +11,7 @@
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ExplosionGfx = void 0;
-const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const Explosion_Shader_1 = __webpack_require__(/*! ./shaders/Explosion.Shader */ "./src/scripts/shaders/Explosion.Shader.ts");
 //
 class ExplosionGfx {
@@ -27,13 +27,13 @@ class ExplosionGfx {
         this.randomPos = (Math.random() - 0.5) * 2;
         this.speedSizeChange = 0.137;
         this.coordEpearingParticle = 0.3;
-        this.opacityCoef = 0.00999;
-        this.wrapper = new three_2.Object3D();
-        this.newPosition = new three_2.Vector3(0, 0.5, 0);
-        this.soursePosition = new three_2.Vector3(0, 0.5, 0);
+        this.opacityCoef = 0.0199;
+        this.wrapper = new three_3.Object3D();
+        this.newPosition = new three_3.Vector3(0, 0.5, 0);
+        this.soursePosition = new three_3.Vector3(0, 0.5, 0);
         this.cubeVisibility = true;
         this.sizeCoef = 0.1;
-        this.externalForce = new three_2.Vector3(0, 0, 0);
+        this.externalForce = new three_3.Vector3(0, 0, 0);
         this._frameDuration = 300;
         this.height = height;
         this.width = width;
@@ -41,18 +41,18 @@ class ExplosionGfx {
         this.numberOfSprites = numberOfSprites;
         // create explosion
         this.material = new Explosion_Shader_1.ExplosionMaterial();
-        this.material.side = three_2.DoubleSide;
+        this.material.side = three_3.DoubleSide;
         this.material.uniforms.uColor.value.setHex(color);
         this.material.uniforms.uFrameDuration.value = this._frameDuration;
         this.generate(this.density, this.height, this.width, this.depth, this.newPosition);
     }
     ;
     generate(density, height, width, depth, newPosition) {
-        const boxGeometry = new three_2.BoxGeometry(1, 1, 1);
-        const boxMaterial = new three_2.MeshBasicMaterial({ color: 0x00ff00 });
+        const boxGeometry = new three_3.BoxGeometry(1, 1, 1);
+        const boxMaterial = new three_3.MeshBasicMaterial({ color: 0x00ff00 });
         boxMaterial.wireframe = true;
         if (!this.cube) {
-            this.cube = new three_2.Mesh(boxGeometry, boxMaterial);
+            this.cube = new three_3.Mesh(boxGeometry, boxMaterial);
             // this.wrapper.add( this.cube );
         }
         if (this.mesh) {
@@ -66,7 +66,7 @@ class ExplosionGfx {
         this.height = height;
         this.width = width;
         this.depth = depth;
-        let explosionPointPosition = new three_2.Vector3(0, 0, 0);
+        let explosionPointPosition = new three_3.Vector3(0, 0, 0);
         this.numberOfSprites = density * height * width * depth;
         let size = [], uv, offsetFrame = [], sizeIncrease = [], opacityDecrease = [], color = [];
         const transformRow1 = [];
@@ -74,9 +74,9 @@ class ExplosionGfx {
         const transformRow3 = [];
         const transformRow4 = [];
         for (let i = 0; i < this.numberOfSprites; i++) {
-            let x = (Math.random() - 0.5) * width * 0.01;
-            let y = Math.random() * height * 0.01;
-            let z = (Math.random() - 0.5) * depth * 0.01;
+            let x = (Math.random() - 0.5) * width * 0.001;
+            let y = Math.random() * height * 0.001;
+            let z = (Math.random() - 0.5) * depth * 0.001;
             let distanceX = explosionPointPosition.x - x;
             let distanceY = y - explosionPointPosition.y;
             let distanceZ = explosionPointPosition.z - z;
@@ -89,13 +89,13 @@ class ExplosionGfx {
             if (Math.abs(distanceZ) > depth / 2.5 - Math.random() - 0.5) {
                 distanceZ -= Math.random() - 0.5;
             }
-            let scaleX = 0.01;
-            let scaleY = 0.01;
-            let scaleZ = 0.01;
+            let scaleX = 0.071;
+            let scaleY = 0.071;
+            let scaleZ = 0.071;
             const rotationX = 0;
             const rotationY = 0;
             const rotationZ = 0;
-            let transformMatrix = new three_2.Matrix4().compose(new three_2.Vector3(distanceX, distanceY, distanceZ), new three_2.Quaternion().setFromEuler(new three_2.Euler(rotationX, rotationY, rotationZ)), new three_2.Vector3(scaleX, scaleY, scaleZ)).toArray();
+            let transformMatrix = new three_3.Matrix4().compose(new three_3.Vector3(distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43), new three_3.Quaternion().setFromEuler(new three_3.Euler(rotationX, rotationY, rotationZ)), new three_3.Vector3(scaleX, scaleY, scaleZ)).toArray();
             transformRow1.push(transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3]);
             transformRow2.push(transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7]);
             transformRow3.push(transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11]);
@@ -122,18 +122,18 @@ class ExplosionGfx {
             0, 1,
             0, 0
         ];
-        this.geometry = new three_2.InstancedBufferGeometry();
-        this.geometry.setAttribute('position', new three_2.Float32BufferAttribute(this.positions, 3));
-        this.geometry.setAttribute('uv', new three_2.Float32BufferAttribute(uv, 2));
-        this.geometry.setAttribute('transformRow1', new three_2.InstancedBufferAttribute(new Float32Array(transformRow1), 4));
-        this.geometry.setAttribute('transformRow2', new three_2.InstancedBufferAttribute(new Float32Array(transformRow2), 4));
-        this.geometry.setAttribute('transformRow3', new three_2.InstancedBufferAttribute(new Float32Array(transformRow3), 4));
-        this.geometry.setAttribute('transformRow4', new three_2.InstancedBufferAttribute(new Float32Array(transformRow4), 4));
-        this.geometry.setAttribute('offsetFrame', new three_2.InstancedBufferAttribute(new Float32Array(offsetFrame), 1));
-        this.geometry.setAttribute('velocity', new three_2.InstancedBufferAttribute(new Float32Array(this.velocity), 3));
-        this.geometry.setAttribute('opacityDecrease', new three_2.InstancedBufferAttribute(new Float32Array(opacityDecrease), 1));
-        this.geometry.setAttribute('size', new three_2.InstancedBufferAttribute(new Float32Array(size), 1));
-        this.mesh = new three_2.Mesh(this.geometry, this.material);
+        this.geometry = new three_3.InstancedBufferGeometry();
+        this.geometry.setAttribute('position', new three_3.Float32BufferAttribute(this.positions, 3));
+        this.geometry.setAttribute('uv', new three_3.Float32BufferAttribute(uv, 2));
+        this.geometry.setAttribute('transformRow1', new three_3.InstancedBufferAttribute(new Float32Array(transformRow1), 4));
+        this.geometry.setAttribute('transformRow2', new three_3.InstancedBufferAttribute(new Float32Array(transformRow2), 4));
+        this.geometry.setAttribute('transformRow3', new three_3.InstancedBufferAttribute(new Float32Array(transformRow3), 4));
+        this.geometry.setAttribute('transformRow4', new three_3.InstancedBufferAttribute(new Float32Array(transformRow4), 4));
+        this.geometry.setAttribute('offsetFrame', new three_3.InstancedBufferAttribute(new Float32Array(offsetFrame), 1));
+        this.geometry.setAttribute('velocity', new three_3.InstancedBufferAttribute(new Float32Array(this.velocity), 3));
+        this.geometry.setAttribute('opacityDecrease', new three_3.InstancedBufferAttribute(new Float32Array(opacityDecrease), 1));
+        this.geometry.setAttribute('size', new three_3.InstancedBufferAttribute(new Float32Array(size), 1));
+        this.mesh = new three_3.Mesh(this.geometry, this.material);
         this.wrapper.add(this.mesh);
     }
     ;
@@ -229,6 +229,7 @@ const OrbitControls_js_1 = __webpack_require__(/*! three/examples/jsm/controls/O
 const ExplosionGfx_1 = __webpack_require__(/*! ./ExplosionGfx */ "./src/scripts/ExplosionGfx.ts");
 const CirclesOnTheFlor_Shader_1 = __webpack_require__(/*! ./shaders/CirclesOnTheFlor.Shader */ "./src/scripts/shaders/CirclesOnTheFlor.Shader.ts");
 const Sphere_Shader_1 = __webpack_require__(/*! ./shaders/Sphere.Shader */ "./src/scripts/shaders/Sphere.Shader.ts");
+const tweakpane_1 = __webpack_require__(/*! tweakpane */ "./node_modules/tweakpane/dist/tweakpane.js");
 //
 class ModelScene {
     constructor() {
@@ -245,11 +246,12 @@ class ModelScene {
                 this.resize();
             }
             //
-            // let explosionPosition = new Vector3( 0, 0, 0 );
-            // this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
-            // this.explosion.material.uniforms.uTime.value = this.elapsedTime;
+            let explosionPosition = new three_1.Vector3(0, 0, 0);
+            if (this.explosion)
+                this.explosion.update(this.delta, explosionPosition, this.explosion.externalForce);
+            this.explosion.material.uniforms.uTime.value = this.elapsedTime;
             this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
-            // this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
+            this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
             this.mapControls.update();
             this.renderer.render(this.scene, this.camera);
         };
@@ -295,9 +297,11 @@ class ModelScene {
         window.addEventListener('resize', this.resize());
         //
         this.clock = new three_1.Clock();
-        // this.addExplosion();
+        this.addExplosion();
         this.addCircleOnTheGround();
-        // this.addSphere();
+        this.addSphere();
+        // this.addCircleOnTheGround();
+        this.debug();
         this.tick();
     }
     ;
@@ -308,8 +312,8 @@ class ModelScene {
             height: 1,
             width: 1,
             depth: 1,
-            outerColor: '#ff0000',
-            innerColor: '#FFCE00',
+            outerColor: '#331402',
+            innerColor: '#ffd675',
             newPosition: new three_1.Vector3(0, 0.5, 0)
         };
         this.explosion = new ExplosionGfx_1.ExplosionGfx(new three_1.Color().setHex(+props.outerColor.replace('#', '0x')).getHex(), props.numberOfSprites, props.height, props.width, props.depth);
@@ -346,13 +350,36 @@ class ModelScene {
     }
     ;
     addSphere() {
-        let sphereGeom = new three_1.SphereBufferGeometry(0.35, 100);
+        let sphereGeom = new three_1.SphereBufferGeometry(0.01, 100);
         this.sphereMaterial = new Sphere_Shader_1.SphereMaterial();
         let sphere = new three_1.Mesh(sphereGeom, this.sphereMaterial);
         this.scene.add(sphere);
     }
     ;
     debug() {
+        let props = {
+            fogInnerColor: '#ff0000',
+            fogOuterColor: '#FFCE00',
+            sphereInnerColor: '#ff0000',
+            sphereOuterColor: '#FFCE00'
+        };
+        let pane = new tweakpane_1.Pane({ title: "Explosion" }); //  expanded: false
+        let paneSphere = pane.addFolder({ title: "Sphere" });
+        let paneFog = pane.addFolder({ title: "Fog" });
+        pane.element.parentElement.style['width'] = '330px';
+        paneSphere.addInput(props, 'sphereInnerColor').on('change', () => {
+            this.sphereMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.sphereInnerColor.replace('#', '0x')));
+        });
+        paneSphere.addInput(props, 'sphereOuterColor').on('change', () => {
+            this.sphereMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.sphereOuterColor.replace('#', '0x')));
+        });
+        //
+        paneFog.addInput(props, 'fogInnerColor').on('change', () => {
+            this.explosionMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.fogInnerColor.replace('#', '0x')));
+        });
+        paneFog.addInput(props, 'fogOuterColor').on('change', () => {
+            this.explosionMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.fogOuterColor.replace('#', '0x')));
+        });
     }
     ;
     resize() {
@@ -380,11 +407,12 @@ exports["default"] = new ModelScene();
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CircleMaterial = void 0;
-const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
-const textureLoader = new three_3.TextureLoader();
-const circleTexture = textureLoader.load('resources/textures/circle.png');
-class CircleMaterial extends three_3.ShaderMaterial {
+const textureLoader = new three_2.TextureLoader();
+const circleTexture = textureLoader.load('resources/textures/circle3.png');
+const noise = textureLoader.load('resources/textures/tNoise.png');
+class CircleMaterial extends three_2.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -407,19 +435,20 @@ class CircleMaterial extends three_3.ShaderMaterial {
                 transformRow4
             );
 
-            gl_Position = projectionMatrix * modelViewMatrix * transforms * vec4( position * uTime * 0.0009, 1.0 );
+            gl_Position = projectionMatrix * modelViewMatrix * transforms * vec4( position * uTime * 0.002, 1.0 );
 
             vUv = uv;
 
         }`,
             this.transparent = true;
-        this.alphaTest = 10.0001;
+        // this.alphaTest = 10.0001;
         this.fragmentShader = `
         varying vec2 vUv;
 
         uniform float uTime;
         uniform sampler2D uTexture;
         uniform vec3 uColor;
+        uniform sampler2D uNoise;
 
         void main() {
 
@@ -430,21 +459,26 @@ class CircleMaterial extends three_3.ShaderMaterial {
 
             float strength = step( 0.02, abs( distance( vUv, vec2( 0.5 ) ) - 0.1 - uTime * 0.0001 ) );
 
-            // if ( distanceToCenter > 0.47 ) { discard; }
-            // if ( distanceToCenter < 0.4 ) { discard; }
+            float noise = texture2D( uNoise, vUv ).r * 5.1;
+            // if ( distanceToCenter > 0.47 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
+            // if ( distanceToCenter < 0.4 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
+            if ( distanceToCenter > 0.47 ) { discard; }
+            if ( distanceToCenter < 0.4 ) { discard; }
 
             // gl_FragColor = vec4( vec3( strength ), 1.0 - uTime * 10.1 ); //* texture2D( uTexture, gl_PointCoord );
 
             gl_FragColor = texture2D( uTexture, vUv );
+            // gl_FragColor = texture2D( uTexture, vUv + sin(uTime * 0.0005) * 0.1 * noise );
             gl_FragColor.rgb += uColor;
 
-            gl_FragColor.a = 1.0;// - uTime * 0.0005;
+            gl_FragColor.a = 0.7 - uTime * 0.0007;
 
         }`,
             this.uniforms = {
                 uTime: { value: 0.0 },
                 uTexture: { value: circleTexture },
-                uColor: { value: new three_3.Color(0x2b1605) }
+                uNoise: { value: noise },
+                uColor: { value: new three_2.Color(0x2b1605) }
             };
     }
 }
@@ -463,13 +497,13 @@ exports.CircleMaterial = CircleMaterial;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ExplosionMaterial = void 0;
-const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_4 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
 let randomnum = Math.random();
-const textureLoader = new three_5.TextureLoader();
+const textureLoader = new three_4.TextureLoader();
 const explosionTexture = textureLoader.load('resources/textures/explosion.png');
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class ExplosionMaterial extends three_5.ShaderMaterial {
+class ExplosionMaterial extends three_4.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -589,13 +623,13 @@ class ExplosionMaterial extends three_5.ShaderMaterial {
             uPointTexture: { value: explosionTexture },
             uNoise: { value: noise },
             alphaTest: { value: 0.0001 },
-            uColor: { value: new three_5.Color(0x1A75FF) },
+            uColor: { value: new three_4.Color(0xeb9c15) },
             uTime: { value: 0.0 },
             uTimeX: { value: 0.0 },
             uTimeY: { value: 0.0 },
             uFrameDuration: { value: 16.0 },
             uOpacity: { value: 0.9 },
-            uInnerColor: { value: new three_5.Color(0xFFCE00) },
+            uInnerColor: { value: new three_4.Color(0xb57507) },
         };
     }
 }
@@ -614,11 +648,11 @@ exports.ExplosionMaterial = ExplosionMaterial;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SphereMaterial = void 0;
-const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
-const textureLoader = new three_2.TextureLoader();
+const textureLoader = new three_5.TextureLoader();
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class SphereMaterial extends three_2.ShaderMaterial {
+class SphereMaterial extends three_5.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -744,11 +778,12 @@ class SphereMaterial extends three_2.ShaderMaterial {
 
             // float n = texture2D( uNoise, abs( normal.xy ) ).r * 0.15;
 
-            float distortion = pnoise( ( normal * 0.98 + uTime * 0.0005 ) * 2.3, vec3( 100.0 ) ) * 0.105;
+            float distortion = pnoise( ( normal * 0.98 + uTime * 0.0005 ) * 2.3, vec3( 100.0 ) ) * 0.005;
 
             vec3 newPosition = position + ( normal * distortion );
-            newPosition.y += 0.2;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition + uTime * 0.0005, 1.0 );
+            // newPosition.y -= 0.1;
+            // gl_Position = projectionMatrix * modelViewMatrix * vec4( vec3( newPosition.x + uTime * 0.004, newPosition.y + uTime * 0.004, newPosition.z + uTime * 0.004 ), 1.0 );
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition * uTime * 0.1, 1.0 );
 
             vUv = uv;
             vNormal = normal;
@@ -759,9 +794,9 @@ class SphereMaterial extends three_2.ShaderMaterial {
         this.fragmentShader = `
         uniform float uTime;
         uniform sampler2D uNoise;
-        uniform vec3 uYellowColor;
-        uniform vec3 uRedColor;
-        uniform vec3 uOrangeColor;
+        uniform vec3 uInnerColor;
+        uniform vec3 uOuterColor;
+        uniform vec3 uMiddleColor;
 
         varying vec2 vUv;
         varying vec3 vNormal;
@@ -774,21 +809,21 @@ class SphereMaterial extends three_2.ShaderMaterial {
         void main() {
 
             float r = 1.1 * random( vec3( 12.9898, 78.233, 151.7182 ), 0.0 );
-            float noise = texture2D( uNoise, abs( vNormal.xy ) ).r * 0.6;
-            vec3 color = mix( uYellowColor, uRedColor, vNoise * 18.0 + r * 0.25 ); //+ noise * 1.0;
+            float noise = texture2D( uNoise, abs( vNormal.xy ) ).r * 1.1;
+            vec3 color = mix( uInnerColor, uOuterColor, noise * 1.6 + r * 1.4 ) * 1.2; //+ noise * 1.0;
             // vec3 color = vec3( noise + r );
-            color = mix( color, uOrangeColor, noise );
+            color = mix( color, uMiddleColor * 0.9, noise );
 
             gl_FragColor.rgb = color;
-            gl_FragColor.a = 1.0 - uTime * 0.0006;
+            gl_FragColor.a = 1.0 - uTime * 0.0015;
 
         }`,
             this.uniforms = {
                 uTime: { value: 0.0 },
                 uNoise: { value: noise },
-                uYellowColor: { value: new three_2.Color(0xffd500) },
-                uRedColor: { value: new three_2.Color(0x871a01) },
-                uOrangeColor: { value: new three_2.Color(0xfa7305) }
+                uInnerColor: { value: new three_5.Color(0xffe55e) },
+                uOuterColor: { value: new three_5.Color(0xd8b625) },
+                uMiddleColor: { value: new three_5.Color(0xfa7305) }
             };
     }
 }
@@ -818,7 +853,7 @@ exports.SphereMaterial = SphereMaterial;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;

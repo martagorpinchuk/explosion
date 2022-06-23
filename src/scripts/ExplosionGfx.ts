@@ -21,7 +21,7 @@ export class ExplosionGfx {
     public randomPos: number = (Math.random() - 0.5) * 2;
     public speedSizeChange: number = 0.137;
     public coordEpearingParticle: number = 0.3;
-    public opacityCoef: number = 0.00999;
+    public opacityCoef: number = 0.0199;
     public cube: Mesh;
     public wrapper: Object3D = new Object3D();
     public newPosition: Vector3 = new Vector3( 0, 0.5, 0 );
@@ -97,9 +97,9 @@ export class ExplosionGfx {
 
         for ( let i = 0; i < this.numberOfSprites; i ++ ) {
 
-            let x = ( Math.random() - 0.5 ) * width * 0.01;
-            let y = Math.random() * height * 0.01;
-            let z = ( Math.random() - 0.5 ) * depth * 0.01;
+            let x = ( Math.random() - 0.5 ) * width * 0.001;
+            let y = Math.random() * height * 0.001;
+            let z = ( Math.random() - 0.5 ) * depth * 0.001;
 
             let distanceX = explosionPointPosition.x - x;
             let distanceY = y - explosionPointPosition.y;
@@ -123,15 +123,15 @@ export class ExplosionGfx {
 
             }
 
-            let scaleX = 0.01;
-            let scaleY = 0.01;
-            let scaleZ = 0.01;
+            let scaleX = 0.071;
+            let scaleY = 0.071;
+            let scaleZ = 0.071;
 
             const rotationX = 0;
             const rotationY = 0;
             const rotationZ = 0;
 
-            let transformMatrix = new Matrix4().compose( new Vector3( distanceX, distanceY, distanceZ ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( scaleX, scaleY, scaleZ ) ).toArray();
+            let transformMatrix = new Matrix4().compose( new Vector3( distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( scaleX, scaleY, scaleZ ) ).toArray();
 
             transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
             transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );

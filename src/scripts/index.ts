@@ -4,6 +4,7 @@ import { ExplosionGfx } from "./ExplosionGfx";
 import { ExplosionMaterial } from "./shaders/Explosion.Shader";
 import { CircleMaterial } from './shaders/CirclesOnTheFlor.Shader';
 import { SphereMaterial } from './shaders/Sphere.Shader';
+import { Pane } from "tweakpane";
 
 //
 
@@ -91,9 +92,12 @@ class ModelScene {
 
         this.clock = new Clock();
 
-        // this.addExplosion();
+        this.addExplosion();
         this.addCircleOnTheGround();
-        // this.addSphere();
+        this.addSphere();
+        // this.addCircleOnTheGround();
+
+        this.debug();
 
         this.tick();
 
@@ -108,8 +112,8 @@ class ModelScene {
             height: 1,
             width: 1,
             depth: 1,
-            outerColor: '#ff0000',
-            innerColor: '#FFCE00',
+            outerColor: '#331402',
+            innerColor: '#ffd675',
             newPosition: new Vector3( 0, 0.5, 0 )
 
         }
@@ -160,16 +164,55 @@ class ModelScene {
 
     public addSphere () : void {
 
-        let sphereGeom = new SphereBufferGeometry( 0.35, 100 );
+        let sphereGeom = new SphereBufferGeometry( 0.01, 100 );
         this.sphereMaterial = new SphereMaterial();
         let sphere = new Mesh( sphereGeom, this.sphereMaterial );
+
         this.scene.add( sphere );
 
     };
 
     public debug () : void {
 
+        let  props = {
 
+            fogInnerColor: '#ff0000',
+            fogOuterColor: '#FFCE00',
+            sphereInnerColor: '#ff0000',
+            sphereOuterColor: '#FFCE00'
+
+        }
+
+        let pane = new Pane(  { title: "Explosion" } ); //  expanded: false
+        let paneSphere = pane.addFolder( { title: "Sphere" } );
+        let paneFog = pane.addFolder( { title: "Fog" } );
+        pane.element.parentElement.style['width'] = '330px';
+
+        paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
+
+            this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereInnerColor.replace( '#', '0x' ) ) )
+
+        } );
+
+        paneSphere.addInput( props, 'sphereOuterColor' ).on( 'change', () => {
+
+            this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereOuterColor.replace( '#', '0x' ) ) )
+
+        } );
+
+        //
+
+        paneFog.addInput( props, 'fogInnerColor' ).on( 'change', () => {
+
+            this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogInnerColor.replace( '#', '0x' ) ) )
+
+        } );
+
+        paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
+
+            this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
+
+        } );
 
     };
 
@@ -201,12 +244,12 @@ class ModelScene {
 
         //
 
-        // let explosionPosition = new Vector3( 0, 0, 0 );
-        // this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
+        let explosionPosition = new Vector3( 0, 0, 0 );
+        if ( this.explosion ) this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
 
-        // this.explosion.material.uniforms.uTime.value = this.elapsedTime;
+        this.explosion.material.uniforms.uTime.value = this.elapsedTime;
         this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
-        // this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
+        this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
 
         this.mapControls.update();
         this.renderer.render( this.scene, this.camera );
