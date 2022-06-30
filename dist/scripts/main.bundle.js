@@ -2,19 +2,19 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/scripts/ExplosionGfx.ts":
-/*!*************************************!*\
-  !*** ./src/scripts/ExplosionGfx.ts ***!
-  \*************************************/
+/***/ "./src/scripts/BlastFog.ts":
+/*!*********************************!*\
+  !*** ./src/scripts/BlastFog.ts ***!
+  \*********************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ExplosionGfx = void 0;
-const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+exports.BlastFog = void 0;
+const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const Explosion_Shader_1 = __webpack_require__(/*! ./shaders/Explosion.Shader */ "./src/scripts/shaders/Explosion.Shader.ts");
 //
-class ExplosionGfx {
+class BlastFog {
     //
     constructor(color, numberOfSprites, height, width, depth) {
         this.numberOfSprites = 60;
@@ -28,12 +28,12 @@ class ExplosionGfx {
         this.speedSizeChange = 0.137;
         this.coordEpearingParticle = 0.3;
         this.opacityCoef = 0.0199;
-        this.wrapper = new three_3.Object3D();
-        this.newPosition = new three_3.Vector3(0, 0.5, 0);
-        this.soursePosition = new three_3.Vector3(0, 0.5, 0);
+        this.wrapper = new three_5.Object3D();
+        this.newPosition = new three_5.Vector3(0, 0.5, 0);
+        this.soursePosition = new three_5.Vector3(0, 0.5, 0);
         this.cubeVisibility = true;
         this.sizeCoef = 0.1;
-        this.externalForce = new three_3.Vector3(0, 0, 0);
+        this.externalForce = new three_5.Vector3(0, 0, 0);
         this._frameDuration = 300;
         this.height = height;
         this.width = width;
@@ -41,18 +41,18 @@ class ExplosionGfx {
         this.numberOfSprites = numberOfSprites;
         // create explosion
         this.material = new Explosion_Shader_1.ExplosionMaterial();
-        this.material.side = three_3.DoubleSide;
+        this.material.side = three_5.DoubleSide;
         this.material.uniforms.uColor.value.setHex(color);
         this.material.uniforms.uFrameDuration.value = this._frameDuration;
         this.generate(this.density, this.height, this.width, this.depth, this.newPosition);
     }
     ;
     generate(density, height, width, depth, newPosition) {
-        const boxGeometry = new three_3.BoxGeometry(1, 1, 1);
-        const boxMaterial = new three_3.MeshBasicMaterial({ color: 0x00ff00 });
+        const boxGeometry = new three_5.BoxGeometry(1, 1, 1);
+        const boxMaterial = new three_5.MeshBasicMaterial({ color: 0x00ff00 });
         boxMaterial.wireframe = true;
         if (!this.cube) {
-            this.cube = new three_3.Mesh(boxGeometry, boxMaterial);
+            this.cube = new three_5.Mesh(boxGeometry, boxMaterial);
             // this.wrapper.add( this.cube );
         }
         if (this.mesh) {
@@ -66,7 +66,7 @@ class ExplosionGfx {
         this.height = height;
         this.width = width;
         this.depth = depth;
-        let explosionPointPosition = new three_3.Vector3(0, 0, 0);
+        let explosionPointPosition = new three_5.Vector3(0, 0, 0);
         this.numberOfSprites = density * height * width * depth;
         let size = [], uv, offsetFrame = [], sizeIncrease = [], opacityDecrease = [], color = [];
         const transformRow1 = [];
@@ -95,7 +95,7 @@ class ExplosionGfx {
             const rotationX = 0;
             const rotationY = 0;
             const rotationZ = 0;
-            let transformMatrix = new three_3.Matrix4().compose(new three_3.Vector3(distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43), new three_3.Quaternion().setFromEuler(new three_3.Euler(rotationX, rotationY, rotationZ)), new three_3.Vector3(scaleX, scaleY, scaleZ)).toArray();
+            let transformMatrix = new three_5.Matrix4().compose(new three_5.Vector3(distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43), new three_5.Quaternion().setFromEuler(new three_5.Euler(rotationX, rotationY, rotationZ)), new three_5.Vector3(scaleX, scaleY, scaleZ)).toArray();
             transformRow1.push(transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3]);
             transformRow2.push(transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7]);
             transformRow3.push(transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11]);
@@ -122,18 +122,18 @@ class ExplosionGfx {
             0, 1,
             0, 0
         ];
-        this.geometry = new three_3.InstancedBufferGeometry();
-        this.geometry.setAttribute('position', new three_3.Float32BufferAttribute(this.positions, 3));
-        this.geometry.setAttribute('uv', new three_3.Float32BufferAttribute(uv, 2));
-        this.geometry.setAttribute('transformRow1', new three_3.InstancedBufferAttribute(new Float32Array(transformRow1), 4));
-        this.geometry.setAttribute('transformRow2', new three_3.InstancedBufferAttribute(new Float32Array(transformRow2), 4));
-        this.geometry.setAttribute('transformRow3', new three_3.InstancedBufferAttribute(new Float32Array(transformRow3), 4));
-        this.geometry.setAttribute('transformRow4', new three_3.InstancedBufferAttribute(new Float32Array(transformRow4), 4));
-        this.geometry.setAttribute('offsetFrame', new three_3.InstancedBufferAttribute(new Float32Array(offsetFrame), 1));
-        this.geometry.setAttribute('velocity', new three_3.InstancedBufferAttribute(new Float32Array(this.velocity), 3));
-        this.geometry.setAttribute('opacityDecrease', new three_3.InstancedBufferAttribute(new Float32Array(opacityDecrease), 1));
-        this.geometry.setAttribute('size', new three_3.InstancedBufferAttribute(new Float32Array(size), 1));
-        this.mesh = new three_3.Mesh(this.geometry, this.material);
+        this.geometry = new three_5.InstancedBufferGeometry();
+        this.geometry.setAttribute('position', new three_5.Float32BufferAttribute(this.positions, 3));
+        this.geometry.setAttribute('uv', new three_5.Float32BufferAttribute(uv, 2));
+        this.geometry.setAttribute('transformRow1', new three_5.InstancedBufferAttribute(new Float32Array(transformRow1), 4));
+        this.geometry.setAttribute('transformRow2', new three_5.InstancedBufferAttribute(new Float32Array(transformRow2), 4));
+        this.geometry.setAttribute('transformRow3', new three_5.InstancedBufferAttribute(new Float32Array(transformRow3), 4));
+        this.geometry.setAttribute('transformRow4', new three_5.InstancedBufferAttribute(new Float32Array(transformRow4), 4));
+        this.geometry.setAttribute('offsetFrame', new three_5.InstancedBufferAttribute(new Float32Array(offsetFrame), 1));
+        this.geometry.setAttribute('velocity', new three_5.InstancedBufferAttribute(new Float32Array(this.velocity), 3));
+        this.geometry.setAttribute('opacityDecrease', new three_5.InstancedBufferAttribute(new Float32Array(opacityDecrease), 1));
+        this.geometry.setAttribute('size', new three_5.InstancedBufferAttribute(new Float32Array(size), 1));
+        this.mesh = new three_5.Mesh(this.geometry, this.material);
         this.wrapper.add(this.mesh);
     }
     ;
@@ -211,7 +211,174 @@ class ExplosionGfx {
     }
     ;
 }
-exports.ExplosionGfx = ExplosionGfx;
+exports.BlastFog = BlastFog;
+
+
+/***/ }),
+
+/***/ "./src/scripts/BlastSphere.ts":
+/*!************************************!*\
+  !*** ./src/scripts/BlastSphere.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BlastSphere = void 0;
+const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const Sphere_Shader_1 = __webpack_require__(/*! ./shaders/Sphere.Shader */ "./src/scripts/shaders/Sphere.Shader.ts");
+//
+class BlastSphere {
+    constructor() {
+        this.wrapper = new three_3.Object3D();
+        this.generate();
+    }
+    ;
+    generate() {
+        let geom = new three_3.SphereBufferGeometry(0.01, 100);
+        this.material = new Sphere_Shader_1.SphereMaterial();
+        let sphere = new three_3.Mesh(geom, this.material);
+        if (sphere) {
+            geom.dispose();
+            this.wrapper.remove(sphere);
+        }
+        this.wrapper.add(sphere);
+        // this.mainScene.scene.add( sphere );
+    }
+    ;
+    update(elapsedTime) {
+        this.material.uniforms.uTime.value = elapsedTime;
+    }
+    ;
+}
+exports.BlastSphere = BlastSphere;
+;
+
+
+/***/ }),
+
+/***/ "./src/scripts/ExplosionGfx.ts":
+/*!*************************************!*\
+  !*** ./src/scripts/ExplosionGfx.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Explosion = void 0;
+const GroundShockWave_1 = __webpack_require__(/*! ./GroundShockWave */ "./src/scripts/GroundShockWave.ts");
+const BlastSphere_1 = __webpack_require__(/*! ./BlastSphere */ "./src/scripts/BlastSphere.ts");
+const BlastFog_1 = __webpack_require__(/*! ./BlastFog */ "./src/scripts/BlastFog.ts");
+const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const index_1 = __webpack_require__(/*! ./index */ "./src/scripts/index.ts");
+//
+class Explosion {
+    constructor() {
+        this.mainScene = new index_1.MainScene();
+        console.log('explosion here!');
+        this.addBlastFog();
+        this.addBlastSphere();
+        this.addGroundShockWave();
+    }
+    ;
+    addBlastFog() {
+        // Explosion
+        let props = {
+            numberOfSprites: 16,
+            height: 1,
+            width: 1,
+            depth: 1,
+            outerColor: '#331402',
+            innerColor: '#ffd675',
+            newPosition: new three_2.Vector3(0, 0.5, 0)
+        };
+        this.blastFog = new BlastFog_1.BlastFog(new three_2.Color().setHex(+props.outerColor.replace('#', '0x')).getHex(), props.numberOfSprites, props.height, props.width, props.depth);
+        this.animation = new Animation();
+        this.mainScene.scene.add(this.blastFog.wrapper);
+    }
+    ;
+    addBlastSphere() {
+        this.blastSphere = new BlastSphere_1.BlastSphere();
+        // this.mainScene.scene.add( this.blastSphere.wrapper );
+    }
+    ;
+    addGroundShockWave() {
+        this.groundShockWave = new GroundShockWave_1.GroundShockWave();
+        // this.mainScene.scene.add( this.groundShockWave.wrapper );
+    }
+    ;
+    update(delta, externalForce, elapsedTime) {
+        let explosionPosition = new three_2.Vector3(0, 0, 0);
+        this.blastFog.update(delta, explosionPosition, externalForce);
+        this.blastSphere.update(elapsedTime);
+        this.groundShockWave.update(elapsedTime);
+    }
+    ;
+}
+exports.Explosion = Explosion;
+;
+
+
+/***/ }),
+
+/***/ "./src/scripts/GroundShockWave.ts":
+/*!****************************************!*\
+  !*** ./src/scripts/GroundShockWave.ts ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GroundShockWave = void 0;
+const three_4 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const CirclesOnTheFlor_Shader_1 = __webpack_require__(/*! ./shaders/CirclesOnTheFlor.Shader */ "./src/scripts/shaders/CirclesOnTheFlor.Shader.ts");
+//
+class GroundShockWave {
+    constructor() {
+        this.wrapper = new three_4.Object3D();
+        this.generate();
+    }
+    ;
+    generate() {
+        let geom = new three_4.PlaneBufferGeometry(1, 1);
+        this.material = new CirclesOnTheFlor_Shader_1.CircleMaterial();
+        let circle = new three_4.Mesh(geom, this.material);
+        const transformRow1 = [];
+        const transformRow2 = [];
+        const transformRow3 = [];
+        const transformRow4 = [];
+        let brightness = [];
+        for (let i = 0; i < 50; i++) {
+            brightness.push((Math.random() - 0.5) * 2);
+            let rotationX = -Math.PI * 0.5;
+            let rotationY = 0;
+            let rotationZ = 0;
+            let transformMatrix = new three_4.Matrix4().compose(new three_4.Vector3(0, 0.01, 0), new three_4.Quaternion().setFromEuler(new three_4.Euler(rotationX, rotationY, rotationZ)), new three_4.Vector3(1, 1, 1)).toArray();
+            transformRow1.push(transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3]);
+            transformRow2.push(transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7]);
+            transformRow3.push(transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11]);
+            transformRow4.push(transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15]);
+        }
+        geom.setAttribute('brightness', new three_4.Float32BufferAttribute(brightness, 1));
+        geom.setAttribute('transformRow1', new three_4.Float32BufferAttribute(new Float32Array(transformRow1), 4));
+        geom.setAttribute('transformRow2', new three_4.Float32BufferAttribute(new Float32Array(transformRow2), 4));
+        geom.setAttribute('transformRow3', new three_4.Float32BufferAttribute(new Float32Array(transformRow3), 4));
+        geom.setAttribute('transformRow4', new three_4.Float32BufferAttribute(new Float32Array(transformRow4), 4));
+        if (circle) {
+            geom.dispose();
+            this.wrapper.remove(circle);
+        }
+        this.wrapper.add(circle);
+        // this.mainScene.scene.add( circle );
+    }
+    ;
+    update(elapsedTime) {
+        this.material.uniforms.uTime.value = elapsedTime;
+    }
+    ;
+}
+exports.GroundShockWave = GroundShockWave;
+;
 
 
 /***/ }),
@@ -224,16 +391,18 @@ exports.ExplosionGfx = ExplosionGfx;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MainScene = void 0;
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const OrbitControls_js_1 = __webpack_require__(/*! three/examples/jsm/controls/OrbitControls.js */ "./node_modules/three/examples/jsm/controls/OrbitControls.js");
 const ExplosionGfx_1 = __webpack_require__(/*! ./ExplosionGfx */ "./src/scripts/ExplosionGfx.ts");
-const CirclesOnTheFlor_Shader_1 = __webpack_require__(/*! ./shaders/CirclesOnTheFlor.Shader */ "./src/scripts/shaders/CirclesOnTheFlor.Shader.ts");
-const Sphere_Shader_1 = __webpack_require__(/*! ./shaders/Sphere.Shader */ "./src/scripts/shaders/Sphere.Shader.ts");
-const tweakpane_1 = __webpack_require__(/*! tweakpane */ "./node_modules/tweakpane/dist/tweakpane.js");
 //
-class ModelScene {
+class MainScene {
     constructor() {
         this.elapsedTime = 0;
+        // public circleMaterial: CircleMaterial;
+        // public sphereMaterial: SphereMaterial;
+        this.externalForce = new three_1.Vector3(0, 0, 0);
+        this.wrapper = new three_1.Object3D();
         this.sizes = {
             height: 0,
             width: 0
@@ -246,12 +415,12 @@ class ModelScene {
                 this.resize();
             }
             //
-            let explosionPosition = new three_1.Vector3(0, 0, 0);
-            if (this.explosion)
-                this.explosion.update(this.delta, explosionPosition, this.explosion.externalForce);
-            this.explosion.material.uniforms.uTime.value = this.elapsedTime;
-            this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
-            this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
+            this.explosion.update(this.delta, this.externalForce, this.elapsedTime);
+            // let explosionPosition = new Vector3( 0, 0, 0 );
+            // if ( this.explosion ) this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
+            // this.explosion.material.uniforms.uTime.value = this.elapsedTime;
+            // this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
+            // this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
             this.mapControls.update();
             this.renderer.render(this.scene, this.camera);
         };
@@ -297,91 +466,89 @@ class ModelScene {
         window.addEventListener('resize', this.resize());
         //
         this.clock = new three_1.Clock();
-        this.addExplosion();
-        this.addCircleOnTheGround();
-        this.addSphere();
-        // this.addCircleOnTheGround();
-        this.debug();
+        // this.addExplosion();
+        // this.addGroundShockWave();
+        // this.addSphere();
+        //
+        this.explosion = new ExplosionGfx_1.Explosion();
+        // this.scene.add( this.explosion );
+        // this.debug();
         this.tick();
     }
     ;
-    addExplosion() {
-        // Explosion
-        let props = {
-            numberOfSprites: 16,
-            height: 1,
-            width: 1,
-            depth: 1,
-            outerColor: '#331402',
-            innerColor: '#ffd675',
-            newPosition: new three_1.Vector3(0, 0.5, 0)
-        };
-        this.explosion = new ExplosionGfx_1.ExplosionGfx(new three_1.Color().setHex(+props.outerColor.replace('#', '0x')).getHex(), props.numberOfSprites, props.height, props.width, props.depth);
-        this.animation = new Animation();
-        this.scene.add(this.explosion.wrapper);
-    }
-    ;
-    addCircleOnTheGround() {
-        let circleGeom = new three_1.PlaneBufferGeometry(1, 1);
-        this.circleMaterial = new CirclesOnTheFlor_Shader_1.CircleMaterial();
-        let circle = new three_1.Mesh(circleGeom, this.circleMaterial);
-        const transformRow1 = [];
-        const transformRow2 = [];
-        const transformRow3 = [];
-        const transformRow4 = [];
-        let brightness = [];
-        for (let i = 0; i < 50; i++) {
-            brightness.push((Math.random() - 0.5) * 2);
-            let rotationX = -Math.PI * 0.5;
-            let rotationY = 0;
-            let rotationZ = 0;
-            let transformMatrix = new three_1.Matrix4().compose(new three_1.Vector3(0, 0.01, 0), new three_1.Quaternion().setFromEuler(new three_1.Euler(rotationX, rotationY, rotationZ)), new three_1.Vector3(1, 1, 1)).toArray();
-            transformRow1.push(transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3]);
-            transformRow2.push(transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7]);
-            transformRow3.push(transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11]);
-            transformRow4.push(transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15]);
-        }
-        circleGeom.setAttribute('brightness', new three_1.Float32BufferAttribute(brightness, 1));
-        circleGeom.setAttribute('transformRow1', new three_1.Float32BufferAttribute(new Float32Array(transformRow1), 4));
-        circleGeom.setAttribute('transformRow2', new three_1.Float32BufferAttribute(new Float32Array(transformRow2), 4));
-        circleGeom.setAttribute('transformRow3', new three_1.Float32BufferAttribute(new Float32Array(transformRow3), 4));
-        circleGeom.setAttribute('transformRow4', new three_1.Float32BufferAttribute(new Float32Array(transformRow4), 4));
-        this.scene.add(circle);
-    }
-    ;
-    addSphere() {
-        let sphereGeom = new three_1.SphereBufferGeometry(0.01, 100);
-        this.sphereMaterial = new Sphere_Shader_1.SphereMaterial();
-        let sphere = new three_1.Mesh(sphereGeom, this.sphereMaterial);
-        this.scene.add(sphere);
-    }
-    ;
-    debug() {
-        let props = {
-            fogInnerColor: '#ff0000',
-            fogOuterColor: '#FFCE00',
-            sphereInnerColor: '#ff0000',
-            sphereOuterColor: '#FFCE00'
-        };
-        let pane = new tweakpane_1.Pane({ title: "Explosion" }); //  expanded: false
-        let paneSphere = pane.addFolder({ title: "Sphere" });
-        let paneFog = pane.addFolder({ title: "Fog" });
-        pane.element.parentElement.style['width'] = '330px';
-        paneSphere.addInput(props, 'sphereInnerColor').on('change', () => {
-            this.sphereMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.sphereInnerColor.replace('#', '0x')));
-        });
-        paneSphere.addInput(props, 'sphereOuterColor').on('change', () => {
-            this.sphereMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.sphereOuterColor.replace('#', '0x')));
-        });
-        //
-        paneFog.addInput(props, 'fogInnerColor').on('change', () => {
-            this.explosionMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.fogInnerColor.replace('#', '0x')));
-        });
-        paneFog.addInput(props, 'fogOuterColor').on('change', () => {
-            this.explosionMaterial.uniforms.uInnerColor.value.setHex(parseInt(props.fogOuterColor.replace('#', '0x')));
-        });
-    }
-    ;
+    // public addExplosion () : void {
+    //     // Explosion
+    //     let props = {
+    //         numberOfSprites: 16,
+    //         height: 1,
+    //         width: 1,
+    //         depth: 1,
+    //         outerColor: '#331402',
+    //         innerColor: '#ffd675',
+    //         newPosition: new Vector3( 0, 0.5, 0 )
+    //     }
+    //     this.explosion = new BlastFog( new Color().setHex( + props.outerColor.replace( '#', '0x' ) ).getHex(), props.numberOfSprites, props.height, props.width, props.depth );
+    //     this.animation = new Animation();
+    //     this.scene.add( this.explosion.wrapper );
+    // };
+    // public addGroundShockWave () : void {
+    //     let circleGeom = new PlaneBufferGeometry( 1, 1 );
+    //     this.circleMaterial = new CircleMaterial();
+    //     let circle = new Mesh( circleGeom, this.circleMaterial );
+    //     const transformRow1 = [];
+    //     const transformRow2 = [];
+    //     const transformRow3 = [];
+    //     const transformRow4 = [];
+    //     let  brightness = [];
+    //     for ( let i = 0; i < 50; i ++ ) {
+    //         brightness.push( ( Math.random() - 0.5 ) * 2 );
+    //         let rotationX = - Math.PI * 0.5;
+    //         let rotationY = 0;
+    //         let rotationZ = 0;
+    //         let transformMatrix = new Matrix4().compose( new Vector3( 0, 0.01, 0 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( 1, 1, 1 ) ).toArray();
+    //         transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
+    //         transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );
+    //         transformRow3.push( transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11] );
+    //         transformRow4.push( transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15] );
+    //     }
+    //     circleGeom.setAttribute( 'brightness', new Float32BufferAttribute( brightness, 1 ) );
+    //     circleGeom.setAttribute( 'transformRow1', new Float32BufferAttribute( new Float32Array( transformRow1 ), 4 ) );
+    //     circleGeom.setAttribute( 'transformRow2', new Float32BufferAttribute( new Float32Array( transformRow2 ), 4 ) );
+    //     circleGeom.setAttribute( 'transformRow3', new Float32BufferAttribute( new Float32Array( transformRow3 ), 4 ) );
+    //     circleGeom.setAttribute( 'transformRow4', new Float32BufferAttribute( new Float32Array( transformRow4 ), 4 ) );
+    //     this.scene.add( circle );
+    // };
+    // public addSphere () : void {
+    //     let sphereGeom = new SphereBufferGeometry( 0.01, 100 );
+    //     this.sphereMaterial = new SphereMaterial();
+    //     let sphere = new Mesh( sphereGeom, this.sphereMaterial );
+    //     this.scene.add( sphere );
+    // };
+    // public debug () : void {
+    //     let  props = {
+    //         fogInnerColor: '#ff0000',
+    //         fogOuterColor: '#FFCE00',
+    //         sphereInnerColor: '#ff0000',
+    //         sphereOuterColor: '#FFCE00'
+    //     }
+    //     let pane = new Pane(  { title: "Explosion" } ); //  expanded: false
+    //     let paneSphere = pane.addFolder( { title: "Sphere" } );
+    //     let paneFog = pane.addFolder( { title: "Fog" } );
+    //     pane.element.parentElement.style['width'] = '330px';
+    //     paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
+    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereInnerColor.replace( '#', '0x' ) ) )
+    //     } );
+    //     paneSphere.addInput( props, 'sphereOuterColor' ).on( 'change', () => {
+    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereOuterColor.replace( '#', '0x' ) ) )
+    //     } );
+    //     //
+    //     paneFog.addInput( props, 'fogInnerColor' ).on( 'change', () => {
+    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogInnerColor.replace( '#', '0x' ) ) )
+    //     } );
+    //     paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
+    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
+    //     } );
+    // };
     resize() {
         this.sizes.width = window.innerWidth;
         this.sizes.height = window.innerHeight;
@@ -392,8 +559,9 @@ class ModelScene {
     }
     ;
 }
+exports.MainScene = MainScene;
 ;
-exports["default"] = new ModelScene();
+exports["default"] = new MainScene();
 
 
 /***/ }),
@@ -407,12 +575,12 @@ exports["default"] = new ModelScene();
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CircleMaterial = void 0;
-const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_6 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
-const textureLoader = new three_2.TextureLoader();
+const textureLoader = new three_6.TextureLoader();
 const circleTexture = textureLoader.load('resources/textures/circle3.png');
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class CircleMaterial extends three_2.ShaderMaterial {
+class CircleMaterial extends three_6.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -478,7 +646,7 @@ class CircleMaterial extends three_2.ShaderMaterial {
                 uTime: { value: 0.0 },
                 uTexture: { value: circleTexture },
                 uNoise: { value: noise },
-                uColor: { value: new three_2.Color(0x2b1605) }
+                uColor: { value: new three_6.Color(0x2b1605) }
             };
     }
 }
@@ -497,13 +665,13 @@ exports.CircleMaterial = CircleMaterial;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ExplosionMaterial = void 0;
-const three_4 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_8 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
 let randomnum = Math.random();
-const textureLoader = new three_4.TextureLoader();
+const textureLoader = new three_8.TextureLoader();
 const explosionTexture = textureLoader.load('resources/textures/explosion.png');
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class ExplosionMaterial extends three_4.ShaderMaterial {
+class ExplosionMaterial extends three_8.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -623,13 +791,13 @@ class ExplosionMaterial extends three_4.ShaderMaterial {
             uPointTexture: { value: explosionTexture },
             uNoise: { value: noise },
             alphaTest: { value: 0.0001 },
-            uColor: { value: new three_4.Color(0xeb9c15) },
+            uColor: { value: new three_8.Color(0xeb9c15) },
             uTime: { value: 0.0 },
             uTimeX: { value: 0.0 },
             uTimeY: { value: 0.0 },
             uFrameDuration: { value: 16.0 },
             uOpacity: { value: 0.9 },
-            uInnerColor: { value: new three_4.Color(0xb57507) },
+            uInnerColor: { value: new three_8.Color(0xb57507) },
         };
     }
 }
@@ -648,11 +816,11 @@ exports.ExplosionMaterial = ExplosionMaterial;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SphereMaterial = void 0;
-const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_7 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
-const textureLoader = new three_5.TextureLoader();
+const textureLoader = new three_7.TextureLoader();
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class SphereMaterial extends three_5.ShaderMaterial {
+class SphereMaterial extends three_7.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -821,9 +989,9 @@ class SphereMaterial extends three_5.ShaderMaterial {
             this.uniforms = {
                 uTime: { value: 0.0 },
                 uNoise: { value: noise },
-                uInnerColor: { value: new three_5.Color(0xffe55e) },
-                uOuterColor: { value: new three_5.Color(0xd8b625) },
-                uMiddleColor: { value: new three_5.Color(0xfa7305) }
+                uInnerColor: { value: new three_7.Color(0xffe55e) },
+                uOuterColor: { value: new three_7.Color(0xd8b625) },
+                uMiddleColor: { value: new three_7.Color(0xfa7305) }
             };
     }
 }
@@ -853,7 +1021,7 @@ exports.SphereMaterial = SphereMaterial;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;

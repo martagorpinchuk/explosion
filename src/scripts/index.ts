@@ -1,14 +1,15 @@
-import { AxesHelper, Clock, Color, Euler, Float32BufferAttribute, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, PlaneGeometry, PointLight, Quaternion, Scene, SphereBufferGeometry, Vector3, WebGLRenderer } from "three";
+import { AxesHelper, Clock, Color, Euler, Float32BufferAttribute, Matrix4, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, PlaneBufferGeometry, PlaneGeometry, PointLight, Quaternion, Scene, SphereBufferGeometry, Vector3, WebGLRenderer } from "three";
 import { MapControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { ExplosionGfx } from "./ExplosionGfx";
 import { ExplosionMaterial } from "./shaders/Explosion.Shader";
 import { CircleMaterial } from './shaders/CirclesOnTheFlor.Shader';
 import { SphereMaterial } from './shaders/Sphere.Shader';
 import { Pane } from "tweakpane";
+import { Explosion } from "./ExplosionGfx";
+
 
 //
 
-class ModelScene {
+export class MainScene {
 
     public scene: Scene;
     public camera: PerspectiveCamera;
@@ -21,11 +22,16 @@ class ModelScene {
     public delta: number;
     public elapsedTime: number = 0;
     public explosionMaterial: ExplosionMaterial;
-    public explosion: ExplosionGfx;
+    // public explosion: BlastFog;
     public animation: Animation;
     public intersects: Vector3;
-    public circleMaterial: CircleMaterial;
-    public sphereMaterial: SphereMaterial;
+    // public circleMaterial: CircleMaterial;
+    // public sphereMaterial: SphereMaterial;
+    public externalForce: Vector3 = new Vector3( 0, 0, 0);
+    public wrapper: Object3D = new Object3D();
+
+    public explosion: Explosion;
+
 
     private sizes = {
 
@@ -92,129 +98,133 @@ class ModelScene {
 
         this.clock = new Clock();
 
-        this.addExplosion();
-        this.addCircleOnTheGround();
-        this.addSphere();
-        // this.addCircleOnTheGround();
+        // this.addExplosion();
+        // this.addGroundShockWave();
+        // this.addSphere();
 
-        this.debug();
+        //
+
+        this.explosion = new Explosion();
+        // this.scene.add( this.explosion );
+
+        // this.debug();
 
         this.tick();
 
     };
 
-    public addExplosion () : void {
+    // public addExplosion () : void {
 
-        // Explosion
-        let props = {
+    //     // Explosion
+    //     let props = {
 
-            numberOfSprites: 16,
-            height: 1,
-            width: 1,
-            depth: 1,
-            outerColor: '#331402',
-            innerColor: '#ffd675',
-            newPosition: new Vector3( 0, 0.5, 0 )
+    //         numberOfSprites: 16,
+    //         height: 1,
+    //         width: 1,
+    //         depth: 1,
+    //         outerColor: '#331402',
+    //         innerColor: '#ffd675',
+    //         newPosition: new Vector3( 0, 0.5, 0 )
 
-        }
-        this.explosion = new ExplosionGfx( new Color().setHex( + props.outerColor.replace( '#', '0x' ) ).getHex(), props.numberOfSprites, props.height, props.width, props.depth );
-        this.animation = new Animation();
-        this.scene.add( this.explosion.wrapper );
+    //     }
+    //     this.explosion = new BlastFog( new Color().setHex( + props.outerColor.replace( '#', '0x' ) ).getHex(), props.numberOfSprites, props.height, props.width, props.depth );
+    //     this.animation = new Animation();
+    //     this.scene.add( this.explosion.wrapper );
 
-    };
+    // };
 
-    public addCircleOnTheGround () : void {
+    // public addGroundShockWave () : void {
 
-        let circleGeom = new PlaneBufferGeometry( 1, 1 );
-        this.circleMaterial = new CircleMaterial();
-        let circle = new Mesh( circleGeom, this.circleMaterial );
+    //     let circleGeom = new PlaneBufferGeometry( 1, 1 );
+    //     this.circleMaterial = new CircleMaterial();
+    //     let circle = new Mesh( circleGeom, this.circleMaterial );
 
-        const transformRow1 = [];
-        const transformRow2 = [];
-        const transformRow3 = [];
-        const transformRow4 = [];
-        let  brightness = [];
+    //     const transformRow1 = [];
+    //     const transformRow2 = [];
+    //     const transformRow3 = [];
+    //     const transformRow4 = [];
+    //     let  brightness = [];
 
-        for ( let i = 0; i < 50; i ++ ) {
+    //     for ( let i = 0; i < 50; i ++ ) {
 
-            brightness.push( ( Math.random() - 0.5 ) * 2 );
+    //         brightness.push( ( Math.random() - 0.5 ) * 2 );
 
-            let rotationX = - Math.PI * 0.5;
-            let rotationY = 0;
-            let rotationZ = 0;
+    //         let rotationX = - Math.PI * 0.5;
+    //         let rotationY = 0;
+    //         let rotationZ = 0;
 
-            let transformMatrix = new Matrix4().compose( new Vector3( 0, 0.01, 0 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( 1, 1, 1 ) ).toArray();
+    //         let transformMatrix = new Matrix4().compose( new Vector3( 0, 0.01, 0 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( 1, 1, 1 ) ).toArray();
 
-            transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
-            transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );
-            transformRow3.push( transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11] );
-            transformRow4.push( transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15] );
+    //         transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
+    //         transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );
+    //         transformRow3.push( transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11] );
+    //         transformRow4.push( transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15] );
 
-        }
+    //     }
 
-        circleGeom.setAttribute( 'brightness', new Float32BufferAttribute( brightness, 1 ) );
-        circleGeom.setAttribute( 'transformRow1', new Float32BufferAttribute( new Float32Array( transformRow1 ), 4 ) );
-        circleGeom.setAttribute( 'transformRow2', new Float32BufferAttribute( new Float32Array( transformRow2 ), 4 ) );
-        circleGeom.setAttribute( 'transformRow3', new Float32BufferAttribute( new Float32Array( transformRow3 ), 4 ) );
-        circleGeom.setAttribute( 'transformRow4', new Float32BufferAttribute( new Float32Array( transformRow4 ), 4 ) );
+    //     circleGeom.setAttribute( 'brightness', new Float32BufferAttribute( brightness, 1 ) );
+    //     circleGeom.setAttribute( 'transformRow1', new Float32BufferAttribute( new Float32Array( transformRow1 ), 4 ) );
+    //     circleGeom.setAttribute( 'transformRow2', new Float32BufferAttribute( new Float32Array( transformRow2 ), 4 ) );
+    //     circleGeom.setAttribute( 'transformRow3', new Float32BufferAttribute( new Float32Array( transformRow3 ), 4 ) );
+    //     circleGeom.setAttribute( 'transformRow4', new Float32BufferAttribute( new Float32Array( transformRow4 ), 4 ) );
 
-        this.scene.add( circle );
+    //     this.scene.add( circle );
 
-    };
+    // };
 
-    public addSphere () : void {
+    // public addSphere () : void {
 
-        let sphereGeom = new SphereBufferGeometry( 0.01, 100 );
-        this.sphereMaterial = new SphereMaterial();
-        let sphere = new Mesh( sphereGeom, this.sphereMaterial );
+    //     let sphereGeom = new SphereBufferGeometry( 0.01, 100 );
+    //     this.sphereMaterial = new SphereMaterial();
+    //     let sphere = new Mesh( sphereGeom, this.sphereMaterial );
 
-        this.scene.add( sphere );
+    //     this.scene.add( sphere );
 
-    };
+    // };
 
-    public debug () : void {
+    // public debug () : void {
 
-        let  props = {
+    //     let  props = {
 
-            fogInnerColor: '#ff0000',
-            fogOuterColor: '#FFCE00',
-            sphereInnerColor: '#ff0000',
-            sphereOuterColor: '#FFCE00'
+    //         fogInnerColor: '#ff0000',
+    //         fogOuterColor: '#FFCE00',
+    //         sphereInnerColor: '#ff0000',
+    //         sphereOuterColor: '#FFCE00'
 
-        }
+    //     }
 
-        let pane = new Pane(  { title: "Explosion" } ); //  expanded: false
-        let paneSphere = pane.addFolder( { title: "Sphere" } );
-        let paneFog = pane.addFolder( { title: "Fog" } );
-        pane.element.parentElement.style['width'] = '330px';
+    //     let pane = new Pane(  { title: "Explosion" } ); //  expanded: false
+    //     let paneSphere = pane.addFolder( { title: "Sphere" } );
+    //     let paneFog = pane.addFolder( { title: "Fog" } );
+    //     pane.element.parentElement.style['width'] = '330px';
 
-        paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
+    //     paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
 
-            this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereInnerColor.replace( '#', '0x' ) ) )
+    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereInnerColor.replace( '#', '0x' ) ) )
 
-        } );
+    //     } );
 
-        paneSphere.addInput( props, 'sphereOuterColor' ).on( 'change', () => {
+    //     paneSphere.addInput( props, 'sphereOuterColor' ).on( 'change', () => {
 
-            this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereOuterColor.replace( '#', '0x' ) ) )
+    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereOuterColor.replace( '#', '0x' ) ) )
 
-        } );
+    //     } );
 
-        //
+    //     //
 
-        paneFog.addInput( props, 'fogInnerColor' ).on( 'change', () => {
+    //     paneFog.addInput( props, 'fogInnerColor' ).on( 'change', () => {
 
-            this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogInnerColor.replace( '#', '0x' ) ) )
+    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogInnerColor.replace( '#', '0x' ) ) )
 
-        } );
+    //     } );
 
-        paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
+    //     paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
 
-            this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
+    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
 
-        } );
+    //     } );
 
-    };
+    // };
 
     private resize () : any {
 
@@ -244,12 +254,14 @@ class ModelScene {
 
         //
 
-        let explosionPosition = new Vector3( 0, 0, 0 );
-        if ( this.explosion ) this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
+        this.explosion.update( this.delta, this.externalForce, this.elapsedTime );
 
-        this.explosion.material.uniforms.uTime.value = this.elapsedTime;
-        this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
-        this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
+        // let explosionPosition = new Vector3( 0, 0, 0 );
+        // if ( this.explosion ) this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
+
+        // this.explosion.material.uniforms.uTime.value = this.elapsedTime;
+        // this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
+        // this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
 
         this.mapControls.update();
         this.renderer.render( this.scene, this.camera );
@@ -258,4 +270,4 @@ class ModelScene {
 
 };
 
-export default new ModelScene();
+export default new MainScene();
