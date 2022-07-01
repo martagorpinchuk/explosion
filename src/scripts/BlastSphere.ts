@@ -1,11 +1,11 @@
 import { Mesh, Object3D, SphereBufferGeometry } from "three";
-import { SphereMaterial } from "./shaders/Sphere.Shader";
+import { BlastSphereMaterial } from "./shaders/BlastSphere.Shader";
 
 //
 
 export class BlastSphere {
 
-    public material: SphereMaterial;
+    public material: BlastSphereMaterial;
     public wrapper: Object3D = new Object3D();
 
     constructor () {
@@ -17,7 +17,7 @@ export class BlastSphere {
     public generate () : void {
 
         let geom = new SphereBufferGeometry( 0.01, 100 );
-        this.material = new SphereMaterial();
+        this.material = new BlastSphereMaterial();
         let sphere = new Mesh( geom, this.material );
 
         if ( sphere ) {

@@ -7,7 +7,7 @@ const textureLoader = new TextureLoader();
 const explosionTexture = textureLoader.load( 'resources/textures/explosion.png' );
 const noise = textureLoader.load( 'resources/textures/tNoise.png' );
 
-export class ExplosionMaterial extends ShaderMaterial {
+export class BlastFogMaterial extends ShaderMaterial {
 
     constructor () {
 
@@ -61,7 +61,7 @@ export class ExplosionMaterial extends ShaderMaterial {
                 transformRow4
             );
 
-            gl_Position = projectionMatrix * ( modelViewMatrix * transforms * vec4(0.0, 0.0, 0.0, 1.0) + vec4( position * size, 1.0 ) );
+            gl_Position = projectionMatrix * ( modelViewMatrix * transforms * vec4( 0.0, 0.0, 0.0, 1.0 ) + vec4( position * size, 1.0 ) );
 
             vUv = uv;
             vOffsetFrame = offsetFrame;

@@ -1,11 +1,11 @@
 import { Euler, Float32BufferAttribute, Matrix4, Mesh, Object3D, PlaneBufferGeometry, Quaternion, Vector3 } from "three";
-import { CircleMaterial } from "./shaders/CirclesOnTheFlor.Shader";
+import { GroundShockWaveMaterial } from "./shaders/GroundShockWave.Shader";
 
 //
 
 export class GroundShockWave {
 
-    public material: CircleMaterial;
+    public material: GroundShockWaveMaterial;
     public wrapper: Object3D = new Object3D();
 
     constructor () {
@@ -17,7 +17,7 @@ export class GroundShockWave {
     public generate () : void {
 
         let geom = new PlaneBufferGeometry( 1, 1 );
-        this.material = new CircleMaterial();
+        this.material = new GroundShockWaveMaterial();
         let circle = new Mesh( geom, this.material );
 
         const transformRow1 = [];

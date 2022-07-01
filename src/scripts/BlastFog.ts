@@ -1,5 +1,5 @@
 import { BoxGeometry, Color, DoubleSide, Euler, Float32BufferAttribute, InstancedBufferAttribute, InstancedBufferGeometry, Matrix4, Mesh, MeshBasicMaterial, Object3D, Quaternion, Vector3 } from "three";
-import { ExplosionMaterial } from './shaders/Explosion.Shader';
+import { BlastFogMaterial } from './shaders/BlastFog.Shader';
 
 //
 
@@ -9,7 +9,7 @@ export class BlastFog {
     public height: number = 1;
     public width: number = 1;
     public depth: number = 1;
-    public material: ExplosionMaterial;
+    public material: BlastFogMaterial;
     public geometry: InstancedBufferGeometry;
     public mesh: Mesh;
     public size: number;
@@ -46,7 +46,7 @@ export class BlastFog {
         this.numberOfSprites = numberOfSprites;
 
         // create explosion
-        this.material = new ExplosionMaterial();
+        this.material = new BlastFogMaterial();
         this.material.side = DoubleSide;
 
         this.material.uniforms.uColor.value.setHex( color );

@@ -6,7 +6,7 @@ const textureLoader = new TextureLoader();
 const circleTexture = textureLoader.load( 'resources/textures/circle3.png' );
 const noise = textureLoader.load( 'resources/textures/tNoise.png' );
 
-export class CircleMaterial extends ShaderMaterial {
+export class GroundShockWaveMaterial extends ShaderMaterial {
 
     constructor () {
 

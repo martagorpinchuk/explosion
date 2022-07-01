@@ -12,7 +12,7 @@
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BlastFog = void 0;
 const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const Explosion_Shader_1 = __webpack_require__(/*! ./shaders/Explosion.Shader */ "./src/scripts/shaders/Explosion.Shader.ts");
+const BlastFog_Shader_1 = __webpack_require__(/*! ./shaders/BlastFog.Shader */ "./src/scripts/shaders/BlastFog.Shader.ts");
 //
 class BlastFog {
     //
@@ -40,7 +40,7 @@ class BlastFog {
         this.depth = depth;
         this.numberOfSprites = numberOfSprites;
         // create explosion
-        this.material = new Explosion_Shader_1.ExplosionMaterial();
+        this.material = new BlastFog_Shader_1.BlastFogMaterial();
         this.material.side = three_5.DoubleSide;
         this.material.uniforms.uColor.value.setHex(color);
         this.material.uniforms.uFrameDuration.value = this._frameDuration;
@@ -226,7 +226,7 @@ exports.BlastFog = BlastFog;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BlastSphere = void 0;
 const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const Sphere_Shader_1 = __webpack_require__(/*! ./shaders/Sphere.Shader */ "./src/scripts/shaders/Sphere.Shader.ts");
+const BlastSphere_Shader_1 = __webpack_require__(/*! ./shaders/BlastSphere.Shader */ "./src/scripts/shaders/BlastSphere.Shader.ts");
 //
 class BlastSphere {
     constructor() {
@@ -236,7 +236,7 @@ class BlastSphere {
     ;
     generate() {
         let geom = new three_3.SphereBufferGeometry(0.01, 100);
-        this.material = new Sphere_Shader_1.SphereMaterial();
+        this.material = new BlastSphere_Shader_1.BlastSphereMaterial();
         let sphere = new three_3.Mesh(geom, this.material);
         if (sphere) {
             geom.dispose();
@@ -270,11 +270,10 @@ const GroundShockWave_1 = __webpack_require__(/*! ./GroundShockWave */ "./src/sc
 const BlastSphere_1 = __webpack_require__(/*! ./BlastSphere */ "./src/scripts/BlastSphere.ts");
 const BlastFog_1 = __webpack_require__(/*! ./BlastFog */ "./src/scripts/BlastFog.ts");
 const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const index_1 = __webpack_require__(/*! ./index */ "./src/scripts/index.ts");
 //
 class Explosion {
+    // public mainScene: MainScene = new MainScene();
     constructor() {
-        this.mainScene = new index_1.MainScene();
         console.log('explosion here!');
         this.addBlastFog();
         this.addBlastSphere();
@@ -294,7 +293,7 @@ class Explosion {
         };
         this.blastFog = new BlastFog_1.BlastFog(new three_2.Color().setHex(+props.outerColor.replace('#', '0x')).getHex(), props.numberOfSprites, props.height, props.width, props.depth);
         this.animation = new Animation();
-        this.mainScene.scene.add(this.blastFog.wrapper);
+        // this.mainScene.scene.add( this.blastFog.wrapper );
     }
     ;
     addBlastSphere() {
@@ -331,7 +330,7 @@ exports.Explosion = Explosion;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GroundShockWave = void 0;
 const three_4 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const CirclesOnTheFlor_Shader_1 = __webpack_require__(/*! ./shaders/CirclesOnTheFlor.Shader */ "./src/scripts/shaders/CirclesOnTheFlor.Shader.ts");
+const GroundShockWave_Shader_1 = __webpack_require__(/*! ./shaders/GroundShockWave.Shader */ "./src/scripts/shaders/GroundShockWave.Shader.ts");
 //
 class GroundShockWave {
     constructor() {
@@ -341,7 +340,7 @@ class GroundShockWave {
     ;
     generate() {
         let geom = new three_4.PlaneBufferGeometry(1, 1);
-        this.material = new CirclesOnTheFlor_Shader_1.CircleMaterial();
+        this.material = new GroundShockWave_Shader_1.GroundShockWaveMaterial();
         let circle = new three_4.Mesh(geom, this.material);
         const transformRow1 = [];
         const transformRow2 = [];
@@ -395,6 +394,7 @@ exports.MainScene = void 0;
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const OrbitControls_js_1 = __webpack_require__(/*! three/examples/jsm/controls/OrbitControls.js */ "./node_modules/three/examples/jsm/controls/OrbitControls.js");
 const ExplosionGfx_1 = __webpack_require__(/*! ./ExplosionGfx */ "./src/scripts/ExplosionGfx.ts");
+const tweakpane_1 = __webpack_require__(/*! tweakpane */ "./node_modules/tweakpane/dist/tweakpane.js");
 //
 class MainScene {
     constructor() {
@@ -416,11 +416,6 @@ class MainScene {
             }
             //
             this.explosion.update(this.delta, this.externalForce, this.elapsedTime);
-            // let explosionPosition = new Vector3( 0, 0, 0 );
-            // if ( this.explosion ) this.explosion.update( this.delta, explosionPosition, this.explosion.externalForce );
-            // this.explosion.material.uniforms.uTime.value = this.elapsedTime;
-            // this.circleMaterial.uniforms.uTime.value = this.elapsedTime;
-            // this.sphereMaterial.uniforms.uTime.value = this.elapsedTime;
             this.mapControls.update();
             this.renderer.render(this.scene, this.camera);
         };
@@ -466,89 +461,15 @@ class MainScene {
         window.addEventListener('resize', this.resize());
         //
         this.clock = new three_1.Clock();
-        // this.addExplosion();
-        // this.addGroundShockWave();
-        // this.addSphere();
         //
         this.explosion = new ExplosionGfx_1.Explosion();
-        // this.scene.add( this.explosion );
-        // this.debug();
+        this.scene.add(this.explosion.blastFog.wrapper);
+        this.scene.add(this.explosion.groundShockWave.wrapper);
+        this.scene.add(this.explosion.blastFog.wrapper);
+        this.debug();
         this.tick();
     }
     ;
-    // public addExplosion () : void {
-    //     // Explosion
-    //     let props = {
-    //         numberOfSprites: 16,
-    //         height: 1,
-    //         width: 1,
-    //         depth: 1,
-    //         outerColor: '#331402',
-    //         innerColor: '#ffd675',
-    //         newPosition: new Vector3( 0, 0.5, 0 )
-    //     }
-    //     this.explosion = new BlastFog( new Color().setHex( + props.outerColor.replace( '#', '0x' ) ).getHex(), props.numberOfSprites, props.height, props.width, props.depth );
-    //     this.animation = new Animation();
-    //     this.scene.add( this.explosion.wrapper );
-    // };
-    // public addGroundShockWave () : void {
-    //     let circleGeom = new PlaneBufferGeometry( 1, 1 );
-    //     this.circleMaterial = new CircleMaterial();
-    //     let circle = new Mesh( circleGeom, this.circleMaterial );
-    //     const transformRow1 = [];
-    //     const transformRow2 = [];
-    //     const transformRow3 = [];
-    //     const transformRow4 = [];
-    //     let  brightness = [];
-    //     for ( let i = 0; i < 50; i ++ ) {
-    //         brightness.push( ( Math.random() - 0.5 ) * 2 );
-    //         let rotationX = - Math.PI * 0.5;
-    //         let rotationY = 0;
-    //         let rotationZ = 0;
-    //         let transformMatrix = new Matrix4().compose( new Vector3( 0, 0.01, 0 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( 1, 1, 1 ) ).toArray();
-    //         transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
-    //         transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );
-    //         transformRow3.push( transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11] );
-    //         transformRow4.push( transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15] );
-    //     }
-    //     circleGeom.setAttribute( 'brightness', new Float32BufferAttribute( brightness, 1 ) );
-    //     circleGeom.setAttribute( 'transformRow1', new Float32BufferAttribute( new Float32Array( transformRow1 ), 4 ) );
-    //     circleGeom.setAttribute( 'transformRow2', new Float32BufferAttribute( new Float32Array( transformRow2 ), 4 ) );
-    //     circleGeom.setAttribute( 'transformRow3', new Float32BufferAttribute( new Float32Array( transformRow3 ), 4 ) );
-    //     circleGeom.setAttribute( 'transformRow4', new Float32BufferAttribute( new Float32Array( transformRow4 ), 4 ) );
-    //     this.scene.add( circle );
-    // };
-    // public addSphere () : void {
-    //     let sphereGeom = new SphereBufferGeometry( 0.01, 100 );
-    //     this.sphereMaterial = new SphereMaterial();
-    //     let sphere = new Mesh( sphereGeom, this.sphereMaterial );
-    //     this.scene.add( sphere );
-    // };
-    // public debug () : void {
-    //     let  props = {
-    //         fogInnerColor: '#ff0000',
-    //         fogOuterColor: '#FFCE00',
-    //         sphereInnerColor: '#ff0000',
-    //         sphereOuterColor: '#FFCE00'
-    //     }
-    //     let pane = new Pane(  { title: "Explosion" } ); //  expanded: false
-    //     let paneSphere = pane.addFolder( { title: "Sphere" } );
-    //     let paneFog = pane.addFolder( { title: "Fog" } );
-    //     pane.element.parentElement.style['width'] = '330px';
-    //     paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
-    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereInnerColor.replace( '#', '0x' ) ) )
-    //     } );
-    //     paneSphere.addInput( props, 'sphereOuterColor' ).on( 'change', () => {
-    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereOuterColor.replace( '#', '0x' ) ) )
-    //     } );
-    //     //
-    //     paneFog.addInput( props, 'fogInnerColor' ).on( 'change', () => {
-    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogInnerColor.replace( '#', '0x' ) ) )
-    //     } );
-    //     paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
-    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
-    //     } );
-    // };
     resize() {
         this.sizes.width = window.innerWidth;
         this.sizes.height = window.innerHeight;
@@ -556,6 +477,35 @@ class MainScene {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.sizes.width, this.sizes.height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+    ;
+    debug() {
+        let props = {
+            fogInnerColor: '#ff0000',
+            fogOuterColor: '#FFCE00',
+            sphereInnerColor: '#ff0000',
+            sphereOuterColor: '#FFCE00'
+        };
+        let pane = new tweakpane_1.Pane({ title: "Explosion" }); //  expanded: false
+        let paneSphere = pane.addFolder({ title: "Sphere" });
+        let paneFog = pane.addFolder({ title: "Fog" });
+        let explosionSize = pane.addFolder({ title: "Size" });
+        pane.element.parentElement.style['width'] = '330px';
+        paneSphere.addInput(props, 'sphereInnerColor').on('change', () => {
+            this.explosion.blastSphere.material.uniforms.uInnerColor.value.setHex(parseInt(props.sphereInnerColor.replace('#', '0x')));
+        });
+        paneSphere.addInput(props, 'sphereOuterColor').on('change', () => {
+            this.explosion.blastSphere.material.uniforms.uInnerColor.value.setHex(parseInt(props.sphereOuterColor.replace('#', '0x')));
+        });
+        //
+        paneFog.addInput(props, 'fogInnerColor').on('change', () => {
+            this.explosion.blastFog.material.uniforms.uInnerColor.value.setHex(parseInt(props.fogInnerColor.replace('#', '0x')));
+        });
+        paneFog.addInput(props, 'fogOuterColor').on('change', () => {
+            this.explosion.blastFog.material.uniforms.uInnerColor.value.setHex(parseInt(props.fogOuterColor.replace('#', '0x')));
+        });
+        // Sizes
+        // explosionSize.addInput(  );
     }
     ;
 }
@@ -566,112 +516,22 @@ exports["default"] = new MainScene();
 
 /***/ }),
 
-/***/ "./src/scripts/shaders/CirclesOnTheFlor.Shader.ts":
-/*!********************************************************!*\
-  !*** ./src/scripts/shaders/CirclesOnTheFlor.Shader.ts ***!
-  \********************************************************/
+/***/ "./src/scripts/shaders/BlastFog.Shader.ts":
+/*!************************************************!*\
+  !*** ./src/scripts/shaders/BlastFog.Shader.ts ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CircleMaterial = void 0;
-const three_6 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-//
-const textureLoader = new three_6.TextureLoader();
-const circleTexture = textureLoader.load('resources/textures/circle3.png');
-const noise = textureLoader.load('resources/textures/tNoise.png');
-class CircleMaterial extends three_6.ShaderMaterial {
-    constructor() {
-        super();
-        this.vertexShader = `
-        varying vec2 vUv;
-
-        attribute float brightness;
-        attribute vec4 transformRow1;
-        attribute vec4 transformRow2;
-        attribute vec4 transformRow3;
-        attribute vec4 transformRow4;
-
-        uniform float uTime;
-
-        void main() {
-
-            mat4 transforms = mat4 (
-                transformRow1,
-                transformRow2,
-                transformRow3,
-                transformRow4
-            );
-
-            gl_Position = projectionMatrix * modelViewMatrix * transforms * vec4( position * uTime * 0.002, 1.0 );
-
-            vUv = uv;
-
-        }`,
-            this.transparent = true;
-        // this.alphaTest = 10.0001;
-        this.fragmentShader = `
-        varying vec2 vUv;
-
-        uniform float uTime;
-        uniform sampler2D uTexture;
-        uniform vec3 uColor;
-        uniform sampler2D uNoise;
-
-        void main() {
-
-            vec2 centeredUv = vec2( vUv - 0.5 );
-            float distanceToCenter = length( centeredUv );
-
-            float circle = step( distanceToCenter, 0.5 );
-
-            float strength = step( 0.02, abs( distance( vUv, vec2( 0.5 ) ) - 0.1 - uTime * 0.0001 ) );
-
-            float noise = texture2D( uNoise, vUv ).r * 5.1;
-            // if ( distanceToCenter > 0.47 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
-            // if ( distanceToCenter < 0.4 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
-            if ( distanceToCenter > 0.47 ) { discard; }
-            if ( distanceToCenter < 0.4 ) { discard; }
-
-            // gl_FragColor = vec4( vec3( strength ), 1.0 - uTime * 10.1 ); //* texture2D( uTexture, gl_PointCoord );
-
-            gl_FragColor = texture2D( uTexture, vUv );
-            // gl_FragColor = texture2D( uTexture, vUv + sin(uTime * 0.0005) * 0.1 * noise );
-            gl_FragColor.rgb += uColor;
-
-            gl_FragColor.a = 0.7 - uTime * 0.0007;
-
-        }`,
-            this.uniforms = {
-                uTime: { value: 0.0 },
-                uTexture: { value: circleTexture },
-                uNoise: { value: noise },
-                uColor: { value: new three_6.Color(0x2b1605) }
-            };
-    }
-}
-exports.CircleMaterial = CircleMaterial;
-;
-
-
-/***/ }),
-
-/***/ "./src/scripts/shaders/Explosion.Shader.ts":
-/*!*************************************************!*\
-  !*** ./src/scripts/shaders/Explosion.Shader.ts ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ExplosionMaterial = void 0;
-const three_8 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+exports.BlastFogMaterial = void 0;
+const three_9 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
 let randomnum = Math.random();
-const textureLoader = new three_8.TextureLoader();
+const textureLoader = new three_9.TextureLoader();
 const explosionTexture = textureLoader.load('resources/textures/explosion.png');
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class ExplosionMaterial extends three_8.ShaderMaterial {
+class BlastFogMaterial extends three_9.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -722,7 +582,7 @@ class ExplosionMaterial extends three_8.ShaderMaterial {
                 transformRow4
             );
 
-            gl_Position = projectionMatrix * ( modelViewMatrix * transforms * vec4(0.0, 0.0, 0.0, 1.0) + vec4( position * size, 1.0 ) );
+            gl_Position = projectionMatrix * ( modelViewMatrix * transforms * vec4( 0.0, 0.0, 0.0, 1.0 ) + vec4( position * size, 1.0 ) );
 
             vUv = uv;
             vOffsetFrame = offsetFrame;
@@ -791,36 +651,36 @@ class ExplosionMaterial extends three_8.ShaderMaterial {
             uPointTexture: { value: explosionTexture },
             uNoise: { value: noise },
             alphaTest: { value: 0.0001 },
-            uColor: { value: new three_8.Color(0xeb9c15) },
+            uColor: { value: new three_9.Color(0xeb9c15) },
             uTime: { value: 0.0 },
             uTimeX: { value: 0.0 },
             uTimeY: { value: 0.0 },
             uFrameDuration: { value: 16.0 },
             uOpacity: { value: 0.9 },
-            uInnerColor: { value: new three_8.Color(0xb57507) },
+            uInnerColor: { value: new three_9.Color(0xb57507) },
         };
     }
 }
-exports.ExplosionMaterial = ExplosionMaterial;
+exports.BlastFogMaterial = BlastFogMaterial;
 ;
 
 
 /***/ }),
 
-/***/ "./src/scripts/shaders/Sphere.Shader.ts":
-/*!**********************************************!*\
-  !*** ./src/scripts/shaders/Sphere.Shader.ts ***!
-  \**********************************************/
+/***/ "./src/scripts/shaders/BlastSphere.Shader.ts":
+/*!***************************************************!*\
+  !*** ./src/scripts/shaders/BlastSphere.Shader.ts ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.SphereMaterial = void 0;
+exports.BlastSphereMaterial = void 0;
 const three_7 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
 const textureLoader = new three_7.TextureLoader();
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class SphereMaterial extends three_7.ShaderMaterial {
+class BlastSphereMaterial extends three_7.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -995,7 +855,97 @@ class SphereMaterial extends three_7.ShaderMaterial {
             };
     }
 }
-exports.SphereMaterial = SphereMaterial;
+exports.BlastSphereMaterial = BlastSphereMaterial;
+;
+
+
+/***/ }),
+
+/***/ "./src/scripts/shaders/GroundShockWave.Shader.ts":
+/*!*******************************************************!*\
+  !*** ./src/scripts/shaders/GroundShockWave.Shader.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GroundShockWaveMaterial = void 0;
+const three_8 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+//
+const textureLoader = new three_8.TextureLoader();
+const circleTexture = textureLoader.load('resources/textures/circle3.png');
+const noise = textureLoader.load('resources/textures/tNoise.png');
+class GroundShockWaveMaterial extends three_8.ShaderMaterial {
+    constructor() {
+        super();
+        this.vertexShader = `
+        varying vec2 vUv;
+
+        attribute float brightness;
+        attribute vec4 transformRow1;
+        attribute vec4 transformRow2;
+        attribute vec4 transformRow3;
+        attribute vec4 transformRow4;
+
+        uniform float uTime;
+
+        void main() {
+
+            mat4 transforms = mat4 (
+                transformRow1,
+                transformRow2,
+                transformRow3,
+                transformRow4
+            );
+
+            gl_Position = projectionMatrix * modelViewMatrix * transforms * vec4( position * uTime * 0.002, 1.0 );
+
+            vUv = uv;
+
+        }`,
+            this.transparent = true;
+        // this.alphaTest = 10.0001;
+        this.fragmentShader = `
+        varying vec2 vUv;
+
+        uniform float uTime;
+        uniform sampler2D uTexture;
+        uniform vec3 uColor;
+        uniform sampler2D uNoise;
+
+        void main() {
+
+            vec2 centeredUv = vec2( vUv - 0.5 );
+            float distanceToCenter = length( centeredUv );
+
+            float circle = step( distanceToCenter, 0.5 );
+
+            float strength = step( 0.02, abs( distance( vUv, vec2( 0.5 ) ) - 0.1 - uTime * 0.0001 ) );
+
+            float noise = texture2D( uNoise, vUv ).r * 5.1;
+            // if ( distanceToCenter > 0.47 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
+            // if ( distanceToCenter < 0.4 + sin( uTime * 0.0005 ) * 0.04 * noise ) { discard; }
+            if ( distanceToCenter > 0.47 ) { discard; }
+            if ( distanceToCenter < 0.4 ) { discard; }
+
+            // gl_FragColor = vec4( vec3( strength ), 1.0 - uTime * 10.1 ); //* texture2D( uTexture, gl_PointCoord );
+
+            gl_FragColor = texture2D( uTexture, vUv );
+            // gl_FragColor = texture2D( uTexture, vUv + sin(uTime * 0.0005) * 0.1 * noise );
+            gl_FragColor.rgb += uColor;
+
+            gl_FragColor.a = 0.7 - uTime * 0.0007;
+
+        }`,
+            this.uniforms = {
+                uTime: { value: 0.0 },
+                uTexture: { value: circleTexture },
+                uNoise: { value: noise },
+                uColor: { value: new three_8.Color(0x2b1605) }
+            };
+    }
+}
+exports.GroundShockWaveMaterial = GroundShockWaveMaterial;
 ;
 
 
@@ -1021,7 +971,7 @@ exports.SphereMaterial = SphereMaterial;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;

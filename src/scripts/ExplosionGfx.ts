@@ -13,7 +13,7 @@ export class Explosion {
     public groundShockWave: GroundShockWave;
     public animation: Animation;
 
-    public mainScene: MainScene = new MainScene();
+    // public mainScene: MainScene = new MainScene();
 
     constructor () {
 
@@ -41,7 +41,7 @@ export class Explosion {
         }
         this.blastFog = new BlastFog( new Color().setHex( + props.outerColor.replace( '#', '0x' ) ).getHex(), props.numberOfSprites, props.height, props.width, props.depth );
         this.animation = new Animation();
-        this.mainScene.scene.add( this.blastFog.wrapper );
+        // this.mainScene.scene.add( this.blastFog.wrapper );
 
     };
 

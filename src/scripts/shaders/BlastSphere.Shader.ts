@@ -4,7 +4,7 @@ import { Color, ShaderMaterial, TextureLoader } from "three";
 const textureLoader = new TextureLoader();
 const noise = textureLoader.load( 'resources/textures/tNoise.png' );
 
-export class SphereMaterial extends ShaderMaterial {
+export class BlastSphereMaterial extends ShaderMaterial {
 
     constructor () {
 
