@@ -46,6 +46,7 @@ export class GroundShockWaveMaterial extends ShaderMaterial {
         uniform sampler2D uTexture;
         uniform vec3 uColor;
         uniform sampler2D uNoise;
+        uniform float uFadingCoef;
 
         void main() {
 
@@ -68,7 +69,7 @@ export class GroundShockWaveMaterial extends ShaderMaterial {
             // gl_FragColor = texture2D( uTexture, vUv + sin(uTime * 0.0005) * 0.1 * noise );
             gl_FragColor.rgb += uColor;
 
-            gl_FragColor.a = 0.7 - uTime * 0.0007;
+            gl_FragColor.a = 0.7 - uTime * 0.0007 * uFadingCoef;
 
         }`,
 
@@ -77,7 +78,8 @@ export class GroundShockWaveMaterial extends ShaderMaterial {
             uTime: { value: 0.0 },
             uTexture: { value: circleTexture },
             uNoise: { value: noise },
-            uColor: { value: new Color( 0x2b1605 ) }
+            uColor: { value: new Color( 0x2b1605 ) },
+            uFadingCoef: { value: 1.0 }
 
         }
 

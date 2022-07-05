@@ -19,7 +19,7 @@ export class BlastFog {
     public rotationX: number;
     public rotationY: number;
     public rotationZ: number;
-    public randomPos: number = (Math.random() - 0.5) * 2;
+    public randomPos: number = ( Math.random() - 0.5 ) * 2;
     public speedSizeChange: number = 0.137;
     public coordEpearingParticle: number = 0.3;
     public opacityCoef: number = 0.0199;
@@ -31,6 +31,11 @@ export class BlastFog {
     public sizeCoef: number = 0.1;
     public externalForce: Vector3 = new Vector3( 0, 0, 0);
     public buffColor: Color;
+    public scaleX: number;
+    public scaleY: number;
+    public scaleZ: number;
+    public opacityDecrease: Array<number> = [];
+    public opacity: number = 1.0;
 
     private _frameDuration: number = 300;
     private _outerColor: number;
@@ -124,15 +129,15 @@ export class BlastFog {
 
             }
 
-            let scaleX = 0.071;
-            let scaleY = 0.071;
-            let scaleZ = 0.071;
+            this.scaleX = 0.071;
+            this.scaleY = 0.071;
+            this.scaleZ = 0.071;
 
             const rotationX = 0;
             const rotationY = 0;
             const rotationZ = 0;
 
-            let transformMatrix = new Matrix4().compose( new Vector3( distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( scaleX, scaleY, scaleZ ) ).toArray();
+            let transformMatrix = new Matrix4().compose( new Vector3( distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( this.scaleX, this.scaleY, this.scaleZ ) ).toArray();
 
             transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
             transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );
@@ -141,7 +146,7 @@ export class BlastFog {
 
             size.push( 0 );
             sizeIncrease.push( Math.random() * 0.02 );
-            opacityDecrease.push( Math.random() * 1.2 );
+            this.opacityDecrease.push( Math.random() * 1.2 );
             this.velocity.push( ( Math.random() - 0.5 ) * 2 / 100, ( Math.random() - 0.5 ) * 2 / 100, ( Math.random() - 0.5 ) * 2 / 100 );
             offsetFrame.push( Math.floor( Math.random() * 50 * 16 ) );
 
@@ -182,7 +187,7 @@ export class BlastFog {
         this.geometry.setAttribute( 'transformRow4', new InstancedBufferAttribute( new Float32Array( transformRow4 ), 4 ) );
         this.geometry.setAttribute( 'offsetFrame', new InstancedBufferAttribute( new Float32Array( offsetFrame ), 1 ) );
         this.geometry.setAttribute( 'velocity', new InstancedBufferAttribute( new Float32Array( this.velocity ), 3 ) );
-        this.geometry.setAttribute( 'opacityDecrease', new InstancedBufferAttribute( new Float32Array( opacityDecrease ), 1 ) );
+        this.geometry.setAttribute( 'opacityDecrease', new InstancedBufferAttribute( new Float32Array( this.opacityDecrease ), 1 ) );
         this.geometry.setAttribute( 'size', new InstancedBufferAttribute( new Float32Array( size ), 1 ) );
 
         this.mesh = new Mesh( this.geometry, this.material );

@@ -7,6 +7,8 @@ export class GroundShockWave {
 
     public material: GroundShockWaveMaterial;
     public wrapper: Object3D = new Object3D();
+    public geometry: PlaneBufferGeometry;
+    public size: number = 1;
 
     constructor () {
 
@@ -16,9 +18,8 @@ export class GroundShockWave {
 
     public generate () : void {
 
-        let geom = new PlaneBufferGeometry( 1, 1 );
+        this.geometry = new PlaneBufferGeometry( this.size, 1 );
         this.material = new GroundShockWaveMaterial();
-        let circle = new Mesh( geom, this.material );
 
         const transformRow1 = [];
         const transformRow2 = [];
@@ -43,15 +44,17 @@ export class GroundShockWave {
 
         }
 
-        geom.setAttribute( 'brightness', new Float32BufferAttribute( brightness, 1 ) );
-        geom.setAttribute( 'transformRow1', new Float32BufferAttribute( new Float32Array( transformRow1 ), 4 ) );
-        geom.setAttribute( 'transformRow2', new Float32BufferAttribute( new Float32Array( transformRow2 ), 4 ) );
-        geom.setAttribute( 'transformRow3', new Float32BufferAttribute( new Float32Array( transformRow3 ), 4 ) );
-        geom.setAttribute( 'transformRow4', new Float32BufferAttribute( new Float32Array( transformRow4 ), 4 ) );
+        this.geometry.setAttribute( 'brightness', new Float32BufferAttribute( brightness, 1 ) );
+        this.geometry.setAttribute( 'transformRow1', new Float32BufferAttribute( new Float32Array( transformRow1 ), 4 ) );
+        this.geometry.setAttribute( 'transformRow2', new Float32BufferAttribute( new Float32Array( transformRow2 ), 4 ) );
+        this.geometry.setAttribute( 'transformRow3', new Float32BufferAttribute( new Float32Array( transformRow3 ), 4 ) );
+        this.geometry.setAttribute( 'transformRow4', new Float32BufferAttribute( new Float32Array( transformRow4 ), 4 ) );
+
+        let circle = new Mesh( this.geometry, this.material );
 
         if ( circle ) {
 
-            geom.dispose();
+            this.geometry.dispose();
 
             this.wrapper.remove( circle );
 

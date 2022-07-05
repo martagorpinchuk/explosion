@@ -18,11 +18,8 @@ export class MainScene {
     public clock: Clock;
     public delta: number;
     public elapsedTime: number = 0;
-    // public explosion: BlastFog;
     public animation: Animation;
     public intersects: Vector3;
-    // public circleMaterial: CircleMaterial;
-    // public sphereMaterial: SphereMaterial;
     public externalForce: Vector3 = new Vector3( 0, 0, 0);
     public wrapper: Object3D = new Object3D();
 
@@ -95,14 +92,37 @@ export class MainScene {
 
         //
 
-        this.explosion = new Explosion();
-        this.scene.add( this.explosion.blastFog.wrapper );
-        this.scene.add( this.explosion.groundShockWave.wrapper );
-        this.scene.add( this.explosion.blastFog.wrapper );
-
+        this.createExplosion();
         this.debug();
 
         this.tick();
+
+        // this.debug();
+
+    };
+
+    public createExplosion () : void {
+
+        if ( this.explosion ) {
+
+            this.explosion.blastSphere.material.dispose();
+            this.explosion.blastSphere.geometry.dispose();
+            this.explosion.blastFog.material.dispose();
+            this.explosion.blastFog.geometry.dispose();
+            this.explosion.groundShockWave.geometry.dispose();
+            this.explosion.groundShockWave.material.dispose();
+
+            this.scene.remove( this.explosion.blastSphere.wrapper );
+            this.scene.remove( this.explosion.blastFog.wrapper );
+            this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+        }
+
+        this.explosion = new Explosion();
+
+        this.scene.add( this.explosion.groundShockWave.wrapper );
+        this.scene.add( this.explosion.blastFog.wrapper );
+        this.scene.add( this.explosion.blastSphere.wrapper );
 
     };
 
@@ -134,6 +154,8 @@ export class MainScene {
         let paneSphere = pane.addFolder( { title: "Sphere" } );
         let paneFog = pane.addFolder( { title: "Fog" } );
         let explosionSize = pane.addFolder( { title: "Size" } );
+        let explosionSpeed = pane.addFolder( { title: "Speed" } );
+        let explosionFade = pane.addFolder( { title: "Fading" } );
         pane.element.parentElement.style['width'] = '330px';
 
         paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
@@ -156,14 +178,174 @@ export class MainScene {
 
         } );
 
-        paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
+        paneFog.addInput( props, 'fogOuterColor', ).on( 'change', () => {
 
             this.explosion.blastFog.material.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
 
         } );
 
         // Sizes
-        // explosionSize.addInput(  );
+        explosionSize.addInput( this.explosion.blastSphere, 'size', { min: 0.01, max: 0.5, step: 0.001, label: 'sphere size' } ).on( 'change', ( options ) => {
+
+            if ( this.explosion ) {
+
+                this.explosion.blastSphere.material.dispose();
+                this.explosion.blastSphere.geometry.dispose();
+                this.explosion.blastFog.material.dispose();
+                this.explosion.blastFog.geometry.dispose();
+                this.explosion.groundShockWave.geometry.dispose();
+                this.explosion.groundShockWave.material.dispose();
+
+                this.scene.remove( this.explosion.blastSphere.wrapper );
+                this.scene.remove( this.explosion.blastFog.wrapper );
+                this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+            }
+
+            this.explosion.blastSphere.size = options.value;
+
+            this.createExplosion();
+
+        } );
+
+        explosionSize.addInput( this.explosion.groundShockWave, 'size', { min: 1, max: 10, step: 0.1, label: 'ground shock wave size' } ).on( 'change', ( options ) => {
+
+            if ( this.explosion ) {
+
+                this.explosion.blastSphere.material.dispose();
+                this.explosion.blastSphere.geometry.dispose();
+                this.explosion.blastFog.material.dispose();
+                this.explosion.blastFog.geometry.dispose();
+                this.explosion.groundShockWave.geometry.dispose();
+                this.explosion.groundShockWave.material.dispose();
+
+                this.scene.remove( this.explosion.blastSphere.wrapper );
+                this.scene.remove( this.explosion.blastFog.wrapper );
+                this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+            }
+
+            this.explosion.groundShockWave.size = options.value;
+
+            this.createExplosion();
+
+        } );
+
+        // Speed
+        explosionSize.addInput( this.explosion.blastFog, 'scaleX', { min: 1, max: 1000.0, step: 0.001, label: 'fog size' } ).on( 'change', ( options ) => {
+
+            if ( this.explosion ) {
+
+                this.explosion.blastSphere.material.dispose();
+                this.explosion.blastSphere.geometry.dispose();
+                this.explosion.blastFog.material.dispose();
+                this.explosion.blastFog.geometry.dispose();
+                this.explosion.groundShockWave.geometry.dispose();
+                this.explosion.groundShockWave.material.dispose();
+
+                this.scene.remove( this.explosion.blastSphere.wrapper );
+                this.scene.remove( this.explosion.blastFog.wrapper );
+                this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+            }
+
+            for ( let i = 0; i < this.explosion.blastFog.numberOfSprites; i ++ ) {
+
+                // this.explosion.blastFog.scaleX = options.value;
+                // this.explosion.blastFog.scaleY = options.value;
+                // this.explosion.blastFog.scaleZ = options.value;
+                let scaleX = this.explosion.blastFog.geometry.attributes.transformRow1.getX( i );
+                let scaleY = this.explosion.blastFog.geometry.attributes.transformRow2.getY( i );
+                let scaleZ = this.explosion.blastFog.geometry.attributes.transformRow3.getZ( i );
+
+                this.explosion.blastFog.geometry.attributes.transformRow1.setX( scaleX * options.value, i );
+                this.explosion.blastFog.geometry.attributes.transformRow2.setY( scaleY * options.value, i );
+                this.explosion.blastFog.geometry.attributes.transformRow3.setZ( scaleZ * options.value, i );
+
+            };
+
+            this.explosion.blastFog.geometry.attributes.transformRow1.needsUpdate = true;
+            this.explosion.blastFog.geometry.attributes.transformRow2.needsUpdate = true;
+            this.explosion.blastFog.geometry.attributes.transformRow3.needsUpdate = true;
+
+            this.createExplosion();
+
+        } );
+
+        // Fading
+        explosionSpeed.addInput( this.explosion.groundShockWave.material.uniforms.uFadingCoef, 'value', { min: 1, max: 100.0, step: 0.001, label: 'ground shock wave fading' } ).on( 'change', ( options ) => {
+
+            if ( this.explosion ) {
+
+                this.explosion.blastSphere.material.dispose();
+                this.explosion.blastSphere.geometry.dispose();
+                this.explosion.blastFog.material.dispose();
+                this.explosion.blastFog.geometry.dispose();
+                this.explosion.groundShockWave.geometry.dispose();
+                this.explosion.groundShockWave.material.dispose();
+
+                this.scene.remove( this.explosion.blastSphere.wrapper );
+                this.scene.remove( this.explosion.blastFog.wrapper );
+                this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+            }
+
+            this.explosion.groundShockWave.material.uniforms.uFadingCoef.value = options.value;
+
+            this.createExplosion();
+
+        } );
+
+        explosionSpeed.addInput( this.explosion.blastFog, 'opacity', { min: 1, max: 100.0, step: 0.001, label: 'fog fading' } ).on( 'change', ( options ) => {
+
+            if ( this.explosion ) {
+
+                this.explosion.blastSphere.material.dispose();
+                this.explosion.blastSphere.geometry.dispose();
+                this.explosion.blastFog.material.dispose();
+                this.explosion.blastFog.geometry.dispose();
+                this.explosion.groundShockWave.geometry.dispose();
+                this.explosion.groundShockWave.material.dispose();
+
+                this.scene.remove( this.explosion.blastSphere.wrapper );
+                this.scene.remove( this.explosion.blastFog.wrapper );
+                this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+            }
+
+            for ( let i = 0; i < this.explosion.blastFog.numberOfSprites; i ++ ) {
+
+                this.explosion.blastFog.opacityDecrease[ i ] = options.value;
+
+            };
+
+            this.createExplosion();
+
+        } );
+
+        explosionFade.addInput( this.explosion.groundShockWave.material.uniforms.uFadingCoef, 'value', { min: 1, max: 100.0, step: 0.001, label: 'ground shock wavw fading' } ).on( 'change', ( options ) => {
+
+            if ( this.explosion ) {
+
+                this.explosion.blastSphere.material.dispose();
+                this.explosion.blastSphere.geometry.dispose();
+                this.explosion.blastFog.material.dispose();
+                this.explosion.blastFog.geometry.dispose();
+                this.explosion.groundShockWave.geometry.dispose();
+                this.explosion.groundShockWave.material.dispose();
+
+                this.scene.remove( this.explosion.blastSphere.wrapper );
+                this.scene.remove( this.explosion.blastFog.wrapper );
+                this.scene.remove( this.explosion.groundShockWave.wrapper );
+
+            }
+
+            this.explosion.groundShockWave.material.uniforms.uFadingCoef.value = options.value;
+
+            this.createExplosion();
+
+        } );
+
 
     };
 
@@ -182,7 +364,7 @@ export class MainScene {
 
         //
 
-        this.explosion.update( this.delta, this.externalForce, this.elapsedTime );
+        if ( this.explosion ) this.explosion.update( this.delta, this.externalForce, this.elapsedTime );
 
         this.mapControls.update();
         this.renderer.render( this.scene, this.camera );

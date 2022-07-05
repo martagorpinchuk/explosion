@@ -19,9 +19,17 @@ export class Explosion {
 
         console.log('explosion here!');
 
-        this.addBlastFog();
         this.addBlastSphere();
+        this.addBlastFog();
         this.addGroundShockWave();
+
+    };
+
+    public addBlastSphere () : void {
+
+        this.blastSphere = new BlastSphere();
+        this.animation = new Animation();
+        // this.mainScene.scene.add( this.blastSphere.wrapper );
 
     };
 
@@ -45,16 +53,10 @@ export class Explosion {
 
     };
 
-    public addBlastSphere () : void {
-
-        this.blastSphere = new BlastSphere();
-        // this.mainScene.scene.add( this.blastSphere.wrapper );
-
-    };
-
     public addGroundShockWave () : void {
 
         this.groundShockWave = new GroundShockWave();
+        this.animation = new Animation();
         // this.mainScene.scene.add( this.groundShockWave.wrapper );
 
     };
@@ -62,54 +64,11 @@ export class Explosion {
     public update ( delta, externalForce, elapsedTime ) : void {
 
         let explosionPosition = new Vector3( 0, 0, 0 );
+
         this.blastFog.update( delta, explosionPosition, externalForce );
         this.blastSphere.update( elapsedTime );
         this.groundShockWave.update( elapsedTime );
 
     };
-
-    // public debug () : void {
-
-    //     let  props = {
-
-    //         fogInnerColor: '#ff0000',
-    //         fogOuterColor: '#FFCE00',
-    //         sphereInnerColor: '#ff0000',
-    //         sphereOuterColor: '#FFCE00'
-
-    //     }
-
-    //     let pane = new Pane(  { title: "Explosion" } ); //  expanded: false
-    //     let paneSphere = pane.addFolder( { title: "Sphere" } );
-    //     let paneFog = pane.addFolder( { title: "Fog" } );
-    //     pane.element.parentElement.style['width'] = '330px';
-
-    //     paneSphere.addInput( props, 'sphereInnerColor' ).on( 'change', () => {
-
-    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereInnerColor.replace( '#', '0x' ) ) )
-
-    //     } );
-
-    //     paneSphere.addInput( props, 'sphereOuterColor' ).on( 'change', () => {
-
-    //         this.sphereMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.sphereOuterColor.replace( '#', '0x' ) ) )
-
-    //     } );
-
-    //     //
-
-    //     paneFog.addInput( props, 'fogInnerColor' ).on( 'change', () => {
-
-    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogInnerColor.replace( '#', '0x' ) ) )
-
-    //     } );
-
-    //     paneFog.addInput( props, 'fogOuterColor' ).on( 'change', () => {
-
-    //         this.explosionMaterial.uniforms.uInnerColor.value.setHex( parseInt( props.fogOuterColor.replace( '#', '0x' ) ) )
-
-    //     } );
-
-    // };
 
 };
