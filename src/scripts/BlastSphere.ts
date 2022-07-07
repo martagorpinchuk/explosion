@@ -8,9 +8,11 @@ export class BlastSphere {
     public material: BlastSphereMaterial;
     public geometry: SphereBufferGeometry;
     public wrapper: Object3D = new Object3D();
-    public size: number = 0.01;
+    public startSphereSize: number;
 
-    constructor () {
+    constructor ( startSphereSize: number ) {
+
+        this.startSphereSize = startSphereSize;
 
         this.generate();
 
@@ -18,7 +20,7 @@ export class BlastSphere {
 
     public generate () : void {
 
-        this.geometry = new SphereBufferGeometry( this.size, 100 );
+        this.geometry = new SphereBufferGeometry( this.startSphereSize, 100 );
         this.material = new BlastSphereMaterial();
         let sphere = new Mesh( this.geometry, this.material );
 
@@ -31,7 +33,6 @@ export class BlastSphere {
         }
 
         this.wrapper.add( sphere );
-        // this.mainScene.scene.add( sphere );
 
     };
 

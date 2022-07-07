@@ -11,12 +11,12 @@
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BlastFog = void 0;
-const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const BlastFog_Shader_1 = __webpack_require__(/*! ./shaders/BlastFog.Shader */ "./src/scripts/shaders/BlastFog.Shader.ts");
 //
 class BlastFog {
     //
-    constructor(color, numberOfSprites, height, width, depth) {
+    constructor(color, numberOfSprites, height, width, depth, startFogSize) {
         this.numberOfSprites = 60;
         this.height = 1;
         this.width = 1;
@@ -28,12 +28,12 @@ class BlastFog {
         this.speedSizeChange = 0.137;
         this.coordEpearingParticle = 0.3;
         this.opacityCoef = 0.0199;
-        this.wrapper = new three_5.Object3D();
-        this.newPosition = new three_5.Vector3(0, 0.5, 0);
-        this.soursePosition = new three_5.Vector3(0, 0.5, 0);
+        this.wrapper = new three_3.Object3D();
+        this.newPosition = new three_3.Vector3(0, 0.5, 0);
+        this.soursePosition = new three_3.Vector3(0, 0.5, 0);
         this.cubeVisibility = true;
         this.sizeCoef = 0.1;
-        this.externalForce = new three_5.Vector3(0, 0, 0);
+        this.externalForce = new three_3.Vector3(0, 0, 0);
         this.opacityDecrease = [];
         this.opacity = 1.0;
         this._frameDuration = 300;
@@ -41,20 +41,21 @@ class BlastFog {
         this.width = width;
         this.depth = depth;
         this.numberOfSprites = numberOfSprites;
+        this.startFogSize = startFogSize;
         // create explosion
         this.material = new BlastFog_Shader_1.BlastFogMaterial();
-        this.material.side = three_5.DoubleSide;
+        this.material.side = three_3.DoubleSide;
         this.material.uniforms.uColor.value.setHex(color);
         this.material.uniforms.uFrameDuration.value = this._frameDuration;
         this.generate(this.density, this.height, this.width, this.depth, this.newPosition);
     }
     ;
     generate(density, height, width, depth, newPosition) {
-        const boxGeometry = new three_5.BoxGeometry(1, 1, 1);
-        const boxMaterial = new three_5.MeshBasicMaterial({ color: 0x00ff00 });
+        const boxGeometry = new three_3.BoxGeometry(1, 1, 1);
+        const boxMaterial = new three_3.MeshBasicMaterial({ color: 0x00ff00 });
         boxMaterial.wireframe = true;
         if (!this.cube) {
-            this.cube = new three_5.Mesh(boxGeometry, boxMaterial);
+            this.cube = new three_3.Mesh(boxGeometry, boxMaterial);
             // this.wrapper.add( this.cube );
         }
         if (this.mesh) {
@@ -68,7 +69,7 @@ class BlastFog {
         this.height = height;
         this.width = width;
         this.depth = depth;
-        let explosionPointPosition = new three_5.Vector3(0, 0, 0);
+        let explosionPointPosition = new three_3.Vector3(0, 0, 0);
         this.numberOfSprites = density * height * width * depth;
         let size = [], uv, offsetFrame = [], sizeIncrease = [], opacityDecrease = [], color = [];
         const transformRow1 = [];
@@ -97,12 +98,12 @@ class BlastFog {
             const rotationX = 0;
             const rotationY = 0;
             const rotationZ = 0;
-            let transformMatrix = new three_5.Matrix4().compose(new three_5.Vector3(distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43), new three_5.Quaternion().setFromEuler(new three_5.Euler(rotationX, rotationY, rotationZ)), new three_5.Vector3(this.scaleX, this.scaleY, this.scaleZ)).toArray();
+            let transformMatrix = new three_3.Matrix4().compose(new three_3.Vector3(distanceX * 0.43, distanceY * 0.43, distanceZ * 0.43), new three_3.Quaternion().setFromEuler(new three_3.Euler(rotationX, rotationY, rotationZ)), new three_3.Vector3(this.scaleX, this.scaleY, this.scaleZ)).toArray();
             transformRow1.push(transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3]);
             transformRow2.push(transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7]);
             transformRow3.push(transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11]);
             transformRow4.push(transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15]);
-            size.push(0);
+            size.push(this.startFogSize);
             sizeIncrease.push(Math.random() * 0.02);
             this.opacityDecrease.push(Math.random() * 1.2);
             this.velocity.push((Math.random() - 0.5) * 2 / 100, (Math.random() - 0.5) * 2 / 100, (Math.random() - 0.5) * 2 / 100);
@@ -124,18 +125,18 @@ class BlastFog {
             0, 1,
             0, 0
         ];
-        this.geometry = new three_5.InstancedBufferGeometry();
-        this.geometry.setAttribute('position', new three_5.Float32BufferAttribute(this.positions, 3));
-        this.geometry.setAttribute('uv', new three_5.Float32BufferAttribute(uv, 2));
-        this.geometry.setAttribute('transformRow1', new three_5.InstancedBufferAttribute(new Float32Array(transformRow1), 4));
-        this.geometry.setAttribute('transformRow2', new three_5.InstancedBufferAttribute(new Float32Array(transformRow2), 4));
-        this.geometry.setAttribute('transformRow3', new three_5.InstancedBufferAttribute(new Float32Array(transformRow3), 4));
-        this.geometry.setAttribute('transformRow4', new three_5.InstancedBufferAttribute(new Float32Array(transformRow4), 4));
-        this.geometry.setAttribute('offsetFrame', new three_5.InstancedBufferAttribute(new Float32Array(offsetFrame), 1));
-        this.geometry.setAttribute('velocity', new three_5.InstancedBufferAttribute(new Float32Array(this.velocity), 3));
-        this.geometry.setAttribute('opacityDecrease', new three_5.InstancedBufferAttribute(new Float32Array(this.opacityDecrease), 1));
-        this.geometry.setAttribute('size', new three_5.InstancedBufferAttribute(new Float32Array(size), 1));
-        this.mesh = new three_5.Mesh(this.geometry, this.material);
+        this.geometry = new three_3.InstancedBufferGeometry();
+        this.geometry.setAttribute('position', new three_3.Float32BufferAttribute(this.positions, 3));
+        this.geometry.setAttribute('uv', new three_3.Float32BufferAttribute(uv, 2));
+        this.geometry.setAttribute('transformRow1', new three_3.InstancedBufferAttribute(new Float32Array(transformRow1), 4));
+        this.geometry.setAttribute('transformRow2', new three_3.InstancedBufferAttribute(new Float32Array(transformRow2), 4));
+        this.geometry.setAttribute('transformRow3', new three_3.InstancedBufferAttribute(new Float32Array(transformRow3), 4));
+        this.geometry.setAttribute('transformRow4', new three_3.InstancedBufferAttribute(new Float32Array(transformRow4), 4));
+        this.geometry.setAttribute('offsetFrame', new three_3.InstancedBufferAttribute(new Float32Array(offsetFrame), 1));
+        this.geometry.setAttribute('velocity', new three_3.InstancedBufferAttribute(new Float32Array(this.velocity), 3));
+        this.geometry.setAttribute('opacityDecrease', new three_3.InstancedBufferAttribute(new Float32Array(this.opacityDecrease), 1));
+        this.geometry.setAttribute('size', new three_3.InstancedBufferAttribute(new Float32Array(size), 1));
+        this.mesh = new three_3.Mesh(this.geometry, this.material);
         this.wrapper.add(this.mesh);
     }
     ;
@@ -227,26 +228,25 @@ exports.BlastFog = BlastFog;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BlastSphere = void 0;
-const three_3 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_4 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const BlastSphere_Shader_1 = __webpack_require__(/*! ./shaders/BlastSphere.Shader */ "./src/scripts/shaders/BlastSphere.Shader.ts");
 //
 class BlastSphere {
-    constructor() {
-        this.wrapper = new three_3.Object3D();
-        this.size = 0.01;
+    constructor(startSphereSize) {
+        this.wrapper = new three_4.Object3D();
+        this.startSphereSize = startSphereSize;
         this.generate();
     }
     ;
     generate() {
-        this.geometry = new three_3.SphereBufferGeometry(this.size, 100);
+        this.geometry = new three_4.SphereBufferGeometry(this.startSphereSize, 100);
         this.material = new BlastSphere_Shader_1.BlastSphereMaterial();
-        let sphere = new three_3.Mesh(this.geometry, this.material);
+        let sphere = new three_4.Mesh(this.geometry, this.material);
         if (sphere) {
             this.geometry.dispose();
             this.wrapper.remove(sphere);
         }
         this.wrapper.add(sphere);
-        // this.mainScene.scene.add( sphere );
     }
     ;
     update(elapsedTime) {
@@ -275,21 +275,25 @@ const BlastFog_1 = __webpack_require__(/*! ./BlastFog */ "./src/scripts/BlastFog
 const three_2 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
 class Explosion {
-    // public mainScene: MainScene = new MainScene();
     constructor() {
+        this.startFogSize = 0;
+        this.startSphereSize = 0.01;
+        this.startWaveSize = 1;
+        this.fogSpeed = 1;
+        this.sphereSpeed = 1;
+        this.waveSpeed = 1;
         console.log('explosion here!');
-        this.addBlastSphere();
-        this.addBlastFog();
-        this.addGroundShockWave();
+        this.addBlastSphere(this.startSphereSize);
+        this.addBlastFog(this.startFogSize);
+        this.addGroundShockWave(this.startWaveSize);
     }
     ;
-    addBlastSphere() {
-        this.blastSphere = new BlastSphere_1.BlastSphere();
+    addBlastSphere(startSphereSize) {
+        this.blastSphere = new BlastSphere_1.BlastSphere(startSphereSize);
         this.animation = new Animation();
-        // this.mainScene.scene.add( this.blastSphere.wrapper );
     }
     ;
-    addBlastFog() {
+    addBlastFog(startFogSize) {
         // Explosion
         let props = {
             numberOfSprites: 16,
@@ -300,22 +304,20 @@ class Explosion {
             innerColor: '#ffd675',
             newPosition: new three_2.Vector3(0, 0.5, 0)
         };
-        this.blastFog = new BlastFog_1.BlastFog(new three_2.Color().setHex(+props.outerColor.replace('#', '0x')).getHex(), props.numberOfSprites, props.height, props.width, props.depth);
+        this.blastFog = new BlastFog_1.BlastFog(new three_2.Color().setHex(+props.outerColor.replace('#', '0x')).getHex(), props.numberOfSprites, props.height, props.width, props.depth, startFogSize);
         this.animation = new Animation();
-        // this.mainScene.scene.add( this.blastFog.wrapper );
     }
     ;
-    addGroundShockWave() {
-        this.groundShockWave = new GroundShockWave_1.GroundShockWave();
+    addGroundShockWave(startWaveSize) {
+        this.groundShockWave = new GroundShockWave_1.GroundShockWave(startWaveSize);
         this.animation = new Animation();
-        // this.mainScene.scene.add( this.groundShockWave.wrapper );
     }
     ;
     update(delta, externalForce, elapsedTime) {
         let explosionPosition = new three_2.Vector3(0, 0, 0);
-        this.blastFog.update(delta, explosionPosition, externalForce);
-        this.blastSphere.update(elapsedTime);
-        this.groundShockWave.update(elapsedTime);
+        this.blastFog.update(delta * this.fogSpeed, explosionPosition, externalForce);
+        this.blastSphere.update(elapsedTime * this.sphereSpeed);
+        this.groundShockWave.update(elapsedTime * this.waveSpeed);
     }
     ;
 }
@@ -334,18 +336,19 @@ exports.Explosion = Explosion;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GroundShockWave = void 0;
-const three_4 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_5 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const GroundShockWave_Shader_1 = __webpack_require__(/*! ./shaders/GroundShockWave.Shader */ "./src/scripts/shaders/GroundShockWave.Shader.ts");
 //
 class GroundShockWave {
-    constructor() {
-        this.wrapper = new three_4.Object3D();
+    constructor(startWaveSize) {
+        this.wrapper = new three_5.Object3D();
         this.size = 1;
+        this.startWaveSize = startWaveSize;
         this.generate();
     }
     ;
     generate() {
-        this.geometry = new three_4.PlaneBufferGeometry(this.size, 1);
+        this.geometry = new three_5.PlaneBufferGeometry(this.size, 1);
         this.material = new GroundShockWave_Shader_1.GroundShockWaveMaterial();
         const transformRow1 = [];
         const transformRow2 = [];
@@ -357,18 +360,18 @@ class GroundShockWave {
             let rotationX = -Math.PI * 0.5;
             let rotationY = 0;
             let rotationZ = 0;
-            let transformMatrix = new three_4.Matrix4().compose(new three_4.Vector3(0, 0.01, 0), new three_4.Quaternion().setFromEuler(new three_4.Euler(rotationX, rotationY, rotationZ)), new three_4.Vector3(1, 1, 1)).toArray();
+            let transformMatrix = new three_5.Matrix4().compose(new three_5.Vector3(0, 0.01, 0), new three_5.Quaternion().setFromEuler(new three_5.Euler(rotationX, rotationY, rotationZ)), new three_5.Vector3(this.startWaveSize, this.startWaveSize, this.startWaveSize)).toArray();
             transformRow1.push(transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3]);
             transformRow2.push(transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7]);
             transformRow3.push(transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11]);
             transformRow4.push(transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15]);
         }
-        this.geometry.setAttribute('brightness', new three_4.Float32BufferAttribute(brightness, 1));
-        this.geometry.setAttribute('transformRow1', new three_4.Float32BufferAttribute(new Float32Array(transformRow1), 4));
-        this.geometry.setAttribute('transformRow2', new three_4.Float32BufferAttribute(new Float32Array(transformRow2), 4));
-        this.geometry.setAttribute('transformRow3', new three_4.Float32BufferAttribute(new Float32Array(transformRow3), 4));
-        this.geometry.setAttribute('transformRow4', new three_4.Float32BufferAttribute(new Float32Array(transformRow4), 4));
-        let circle = new three_4.Mesh(this.geometry, this.material);
+        this.geometry.setAttribute('brightness', new three_5.Float32BufferAttribute(brightness, 1));
+        this.geometry.setAttribute('transformRow1', new three_5.Float32BufferAttribute(new Float32Array(transformRow1), 4));
+        this.geometry.setAttribute('transformRow2', new three_5.Float32BufferAttribute(new Float32Array(transformRow2), 4));
+        this.geometry.setAttribute('transformRow3', new three_5.Float32BufferAttribute(new Float32Array(transformRow3), 4));
+        this.geometry.setAttribute('transformRow4', new three_5.Float32BufferAttribute(new Float32Array(transformRow4), 4));
+        let circle = new three_5.Mesh(this.geometry, this.material);
         if (circle) {
             this.geometry.dispose();
             this.wrapper.remove(circle);
@@ -528,7 +531,7 @@ class MainScene {
             this.explosion.blastFog.material.uniforms.uInnerColor.value.setHex(parseInt(props.fogOuterColor.replace('#', '0x')));
         });
         // Sizes
-        explosionSize.addInput(this.explosion.blastSphere, 'size', { min: 0.01, max: 0.5, step: 0.001, label: 'sphere size' }).on('change', (options) => {
+        explosionSize.addInput(this.explosion.blastSphere, 'startSphereSize', { min: 0.01, max: 0.5, step: 0.001, label: 'sphere size' }).on('change', (options) => {
             if (this.explosion) {
                 this.explosion.blastSphere.material.dispose();
                 this.explosion.blastSphere.geometry.dispose();
@@ -540,7 +543,7 @@ class MainScene {
                 this.scene.remove(this.explosion.blastFog.wrapper);
                 this.scene.remove(this.explosion.groundShockWave.wrapper);
             }
-            this.explosion.blastSphere.size = options.value;
+            this.explosion.blastSphere.startSphereSize = options.value;
             this.createExplosion();
         });
         explosionSize.addInput(this.explosion.groundShockWave, 'size', { min: 1, max: 10, step: 0.1, label: 'ground shock wave size' }).on('change', (options) => {
@@ -656,13 +659,13 @@ exports["default"] = new MainScene();
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BlastFogMaterial = void 0;
-const three_9 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_8 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
 let randomnum = Math.random();
-const textureLoader = new three_9.TextureLoader();
+const textureLoader = new three_8.TextureLoader();
 const explosionTexture = textureLoader.load('resources/textures/explosion.png');
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class BlastFogMaterial extends three_9.ShaderMaterial {
+class BlastFogMaterial extends three_8.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -782,13 +785,13 @@ class BlastFogMaterial extends three_9.ShaderMaterial {
             uPointTexture: { value: explosionTexture },
             uNoise: { value: noise },
             alphaTest: { value: 0.0001 },
-            uColor: { value: new three_9.Color(0xeb9c15) },
+            uColor: { value: new three_8.Color(0xeb9c15) },
             uTime: { value: 0.0 },
             uTimeX: { value: 0.0 },
             uTimeY: { value: 0.0 },
             uFrameDuration: { value: 16.0 },
             uOpacity: { value: 0.9 },
-            uInnerColor: { value: new three_9.Color(0xb57507) },
+            uInnerColor: { value: new three_8.Color(0xb57507) },
         };
     }
 }
@@ -1001,12 +1004,12 @@ exports.BlastSphereMaterial = BlastSphereMaterial;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GroundShockWaveMaterial = void 0;
-const three_8 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const three_6 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 //
-const textureLoader = new three_8.TextureLoader();
+const textureLoader = new three_6.TextureLoader();
 const circleTexture = textureLoader.load('resources/textures/circle3.png');
 const noise = textureLoader.load('resources/textures/tNoise.png');
-class GroundShockWaveMaterial extends three_8.ShaderMaterial {
+class GroundShockWaveMaterial extends three_6.ShaderMaterial {
     constructor() {
         super();
         this.vertexShader = `
@@ -1073,7 +1076,7 @@ class GroundShockWaveMaterial extends three_8.ShaderMaterial {
                 uTime: { value: 0.0 },
                 uTexture: { value: circleTexture },
                 uNoise: { value: noise },
-                uColor: { value: new three_8.Color(0x2b1605) },
+                uColor: { value: new three_6.Color(0x2b1605) },
                 uFadingCoef: { value: 1.0 }
             };
     }

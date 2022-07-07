@@ -185,7 +185,7 @@ export class MainScene {
         } );
 
         // Sizes
-        explosionSize.addInput( this.explosion.blastSphere, 'size', { min: 0.01, max: 0.5, step: 0.001, label: 'sphere size' } ).on( 'change', ( options ) => {
+        explosionSize.addInput( this.explosion.blastSphere, 'startSphereSize', { min: 0.01, max: 0.5, step: 0.001, label: 'sphere size' } ).on( 'change', ( options ) => {
 
             if ( this.explosion ) {
 
@@ -202,7 +202,7 @@ export class MainScene {
 
             }
 
-            this.explosion.blastSphere.size = options.value;
+            this.explosion.blastSphere.startSphereSize = options.value;
 
             this.createExplosion();
 

@@ -36,6 +36,7 @@ export class BlastFog {
     public scaleZ: number;
     public opacityDecrease: Array<number> = [];
     public opacity: number = 1.0;
+    public startFogSize: number;
 
     private _frameDuration: number = 300;
     private _outerColor: number;
@@ -43,12 +44,13 @@ export class BlastFog {
 
     //
 
-    constructor ( color: number, numberOfSprites: number, height: number, width: number, depth: number ) {
+    constructor ( color: number, numberOfSprites: number, height: number, width: number, depth: number, startFogSize: number ) {
 
         this.height = height;
         this.width = width;
         this.depth = depth;
         this.numberOfSprites = numberOfSprites;
+        this.startFogSize = startFogSize;
 
         // create explosion
         this.material = new BlastFogMaterial();
@@ -144,7 +146,7 @@ export class BlastFog {
             transformRow3.push( transformMatrix[8], transformMatrix[9], transformMatrix[10], transformMatrix[11] );
             transformRow4.push( transformMatrix[12], transformMatrix[13], transformMatrix[14], transformMatrix[15] );
 
-            size.push( 0 );
+            size.push( this.startFogSize );
             sizeIncrease.push( Math.random() * 0.02 );
             this.opacityDecrease.push( Math.random() * 1.2 );
             this.velocity.push( ( Math.random() - 0.5 ) * 2 / 100, ( Math.random() - 0.5 ) * 2 / 100, ( Math.random() - 0.5 ) * 2 / 100 );

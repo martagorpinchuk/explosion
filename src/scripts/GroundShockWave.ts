@@ -9,8 +9,11 @@ export class GroundShockWave {
     public wrapper: Object3D = new Object3D();
     public geometry: PlaneBufferGeometry;
     public size: number = 1;
+    public startWaveSize: number;
 
-    constructor () {
+    constructor ( startWaveSize ) {
+
+        this.startWaveSize = startWaveSize;
 
         this.generate();
 
@@ -35,7 +38,7 @@ export class GroundShockWave {
             let rotationY = 0;
             let rotationZ = 0;
 
-            let transformMatrix = new Matrix4().compose( new Vector3( 0, 0.01, 0 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( 1, 1, 1 ) ).toArray();
+            let transformMatrix = new Matrix4().compose( new Vector3( 0, 0.01, 0 ), new Quaternion().setFromEuler( new Euler( rotationX, rotationY, rotationZ ) ), new Vector3( this.startWaveSize, this.startWaveSize, this.startWaveSize ) ).toArray();
 
             transformRow1.push( transformMatrix[0], transformMatrix[1], transformMatrix[2], transformMatrix[3] );
             transformRow2.push( transformMatrix[4], transformMatrix[5], transformMatrix[6], transformMatrix[7] );
